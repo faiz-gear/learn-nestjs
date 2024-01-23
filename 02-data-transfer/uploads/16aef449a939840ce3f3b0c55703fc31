@@ -1,0 +1,56 @@
+
+<map>
+  <node ID="root" TEXT="学习路线">
+    <node TEXT="计算机网络" ID="8RicMJLZfc" _mubu_text="%3Cspan%3E%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%3C/span%3E" STYLE="bubble" POSITION="right">
+      <node TEXT="图解HTTP（书籍，已完成，2023-11-10）" ID="wyUDpwOWKb" _mubu_text="%3Cspan%20class=%22%20text-color-green%22%3E%E5%9B%BE%E8%A7%A3HTTP%EF%BC%88%E4%B9%A6%E7%B1%8D%EF%BC%8C%E5%B7%B2%E5%AE%8C%E6%88%90%EF%BC%8C2023-11-10%EF%BC%89%3C/span%3E" STYLE="fork"/>
+      <node TEXT="小林coding 图解网络（待面试准备前复习）" ID="Cyz2PIwMQl" _mubu_text="%3Cspan%3E%E5%B0%8F%E6%9E%97coding%20%E5%9B%BE%E8%A7%A3%E7%BD%91%E7%BB%9C%EF%BC%88%E5%BE%85%E9%9D%A2%E8%AF%95%E5%87%86%E5%A4%87%E5%89%8D%E5%A4%8D%E4%B9%A0%EF%BC%89%3C/span%3E" STYLE="fork"/>
+    </node>
+    <node TEXT="Javascript" ID="7fgyrco7oj" _mubu_text="%3Cspan%3EJavascript%3C/span%3E" STYLE="bubble" POSITION="right">
+      <node TEXT="Javascript高级程序设计（书籍，待进行）" ID="dtoQJqOtYv" _mubu_text="%3Cspan%3EJavascript%E9%AB%98%E7%BA%A7%E7%A8%8B%E5%BA%8F%E8%AE%BE%E8%AE%A1%EF%BC%88%E4%B9%A6%E7%B1%8D%EF%BC%8C%E5%BE%85%E8%BF%9B%E8%A1%8C%EF%BC%89%3C/span%3E" STYLE="fork"/>
+    </node>
+    <node TEXT="框架" ID="kDXH0qeTPd" _mubu_text="%3Cspan%3E%E6%A1%86%E6%9E%B6%3C/span%3E" STYLE="bubble" POSITION="right">
+      <node TEXT="React" ID="lSmhILnTga" _mubu_text="%3Cspan%3EReact%3C/span%3E" STYLE="fork">
+        <node TEXT="React源码（书籍，已完成）" ID="yO49cy7Foe" _mubu_text="%3Cspan%20class=%22%20text-color-green%22%3EReact%E6%BA%90%E7%A0%81%EF%BC%88%E4%B9%A6%E7%B1%8D%EF%BC%8C%E5%B7%B2%E5%AE%8C%E6%88%90%EF%BC%89%3C/span%3E" STYLE="fork"/>
+        <node TEXT="React源码（视频，进行中）" ID="SSX9wTkH9S" _mubu_text="%3Cspan%20class=%22%20text-color-yellow%22%3EReact%E6%BA%90%E7%A0%81%EF%BC%88%E8%A7%86%E9%A2%91%EF%BC%8C%E8%BF%9B%E8%A1%8C%E4%B8%AD%EF%BC%89%3C/span%3E" STYLE="fork"/>
+      </node>
+      <node TEXT="Vue" ID="LABEAc2d1s" _mubu_text="%3Cspan%3EVue%3C/span%3E" STYLE="fork">
+        <node TEXT="暂无计划" ID="8JFCXphVV2" _mubu_text="%3Cspan%3E%E6%9A%82%E6%97%A0%E8%AE%A1%E5%88%92%3C/span%3E" STYLE="fork"/>
+      </node>
+    </node>
+    <node TEXT="构建工具" ID="9AwP0BBhmd" _mubu_text="%3Cspan%3E%E6%9E%84%E5%BB%BA%E5%B7%A5%E5%85%B7%3C/span%3E" STYLE="bubble" POSITION="right">
+      <node TEXT="Webpack" ID="iuDa3X4EGJ" _mubu_text="%3Cspan%3EWebpack%3C/span%3E" STYLE="fork">
+        <node TEXT="暂无计划" ID="EeEJ3vNFB7" _mubu_text="%3Cspan%3E%E6%9A%82%E6%97%A0%E8%AE%A1%E5%88%92%3C/span%3E" STYLE="fork"/>
+      </node>
+      <node TEXT="Vite" ID="FPiep4sckJ" _mubu_text="%3Cspan%3EVite%3C/span%3E" STYLE="fork">
+        <node TEXT="暂无计划" ID="VGojy4xxA2" _mubu_text="%3Cspan%3E%E6%9A%82%E6%97%A0%E8%AE%A1%E5%88%92%3C/span%3E" STYLE="fork"/>
+      </node>
+    </node>
+    <node TEXT="SSR" ID="RMr5fynboF" _mubu_text="%3Cspan%3ESSR%3C/span%3E" STYLE="bubble" POSITION="left">
+      <node TEXT="Nextjs（小册，进行中）" ID="AiesZ9HXdq" _mubu_text="%3Cspan%3ENextjs%EF%BC%88%E5%B0%8F%E5%86%8C%EF%BC%8C%E8%BF%9B%E8%A1%8C%E4%B8%AD%EF%BC%89%3C/span%3E" STYLE="fork"/>
+    </node>
+    <node TEXT="跨端" ID="XWa2dCmhZR" _mubu_text="%3Cspan%3E%E8%B7%A8%E7%AB%AF%3C/span%3E" STYLE="bubble" POSITION="left">
+      <node TEXT="React Native" ID="st1G10rJAI" _mubu_text="%3Cspan%3EReact%20Native%3C/span%3E" STYLE="fork">
+        <node TEXT="暂无计划" ID="C8UlZDKuGG" _mubu_text="%3Cspan%3E%E6%9A%82%E6%97%A0%E8%AE%A1%E5%88%92%3C/span%3E" STYLE="fork"/>
+      </node>
+      <node TEXT="Electron" ID="kc4NxbzdvO" _mubu_text="%3Cspan%3EElectron%3C/span%3E" STYLE="fork">
+        <node TEXT="暂无计划" ID="eNNjubpCYU" _mubu_text="%3Cspan%3E%E6%9A%82%E6%97%A0%E8%AE%A1%E5%88%92%3C/span%3E" STYLE="fork"/>
+      </node>
+      <node TEXT="Flutter" ID="6bFCWvORiC" _mubu_text="%3Cspan%3EFlutter%3C/span%3E" STYLE="fork">
+        <node TEXT="暂无计划" ID="Ks8N2riiWX" _mubu_text="%3Cspan%3E%E6%9A%82%E6%97%A0%E8%AE%A1%E5%88%92%3C/span%3E" STYLE="fork"/>
+      </node>
+    </node>
+    <node TEXT="服务端" ID="MPjYqZATRb" _mubu_text="%3Cspan%3E%E6%9C%8D%E5%8A%A1%E7%AB%AF%3C/span%3E" STYLE="bubble" POSITION="left">
+      <node TEXT="nodejs深入浅出（视频， 待进行）" ID="1lnjjJES3Q" _mubu_text="%3Cspan%3Enodejs%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BA%EF%BC%88%E8%A7%86%E9%A2%91%EF%BC%8C%20%E5%BE%85%E8%BF%9B%E8%A1%8C%EF%BC%89%3C/span%3E" STYLE="fork"/>
+      <node TEXT="nestjs（小册，待进行）" ID="VLSIenaXwM" _mubu_text="%3Cspan%3Enestjs%EF%BC%88%E5%B0%8F%E5%86%8C%EF%BC%8C%E5%BE%85%E8%BF%9B%E8%A1%8C%EF%BC%89%3C/span%3E" STYLE="fork"/>
+      <node TEXT="数据库" ID="vmwbLsmqDz" _mubu_text="%3Cspan%3E%E6%95%B0%E6%8D%AE%E5%BA%93%3C/span%3E" STYLE="fork">
+        <node TEXT="Mongoose" ID="UOadvJMYrQ" _mubu_text="%3Cspan%3EMongoose%3C/span%3E" STYLE="fork"/>
+        <node TEXT="Prisma" ID="pOkShENWQS" _mubu_text="%3Cspan%3EPrisma%3C/span%3E" STYLE="fork"/>
+        <node TEXT="Redis" ID="hkiVbhqWl2" _mubu_text="%3Cspan%3ERedis%3C/span%3E" STYLE="fork"/>
+      </node>
+    </node>
+    <node TEXT="其他" ID="LxKyZg1aOR" _mubu_text="%3Cspan%3E%E5%85%B6%E4%BB%96%3C/span%3E" STYLE="bubble" POSITION="left">
+      <node TEXT="Hello 算法（进行中...）" ID="OdxgZRPeSW" _mubu_text="%3Cspan%20class=%22%20text-color-yellow%22%3EHello%20%E7%AE%97%E6%B3%95%EF%BC%88%E8%BF%9B%E8%A1%8C%E4%B8%AD...%EF%BC%89%3C/span%3E" STYLE="fork"/>
+      <node TEXT="设计模式（书籍，已完成，2023-12-28）" ID="pSgJibig5r" _mubu_text="%3Cspan%20class=%22%20text-color-green%22%3E%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B9%A6%E7%B1%8D%EF%BC%8C%E5%B7%B2%E5%AE%8C%E6%88%90%EF%BC%8C2023-12-28%EF%BC%89%3C/span%3E" STYLE="fork"/>
+    </node>
+  </node>
+</map>
