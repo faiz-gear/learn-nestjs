@@ -6,7 +6,7 @@
   "configurations": [
     {
       "name": "Launch via NPM",
-      "cwd": "${workspaceFolder}/05-debug-nest",
+      "cwd": "${workspaceFolder}/06-custom-provider",
       "request": "launch",
       "runtimeArgs": ["run", "start:dev"],
       "runtimeExecutable": "npm",
