@@ -3,8 +3,8 @@ const OSS = require('ali-oss')
 // const client = new OSS({
 //   region: 'oss-cn-shenzhen',
 //   bucket: 'faiz-gear-test',
-//   accessKeyId: 'LTAI5tKPbTLfFoz3z5fpMo4C',
-//   accessKeySecret: 'be7T79fDCRGhEyw6ai74xtkc46WmFA'
+//   accessKeyId: '',
+//   accessKeySecret: ''
 // })
 
 // async function put() {
@@ -22,8 +22,8 @@ async function main() {
   const config = {
     region: 'oss-cn-shenzhen',
     bucket: 'faiz-gear-test',
-    accessKeyId: 'LTAI5tKPbTLfFoz3z5fpMo4C',
-    accessKeySecret: 'be7T79fDCRGhEyw6ai74xtkc46WmFA'
+    accessKeyId: '',
+    accessKeySecret: ''
   }
 
   const client = new OSS(config)
