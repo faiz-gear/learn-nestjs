@@ -1,0 +1,24 @@
+module.exports = {
+  apps: [
+    {
+      script: 'dist/main.js',
+      watch: '.',
+      exec_mode: 'cluster',
+      instances: 'max',
+    },
+  ],
+
+  deploy: {
+    production: {
+      user: 'SSH_USERNAME',
+      host: 'SSH_HOSTMACHINE',
+      ref: 'origin/master',
+      repo: 'GIT_REPOSITORY',
+      path: 'DESTINATION_PATH',
+      'pre-deploy-local': '',
+      'post-deploy':
+        'npm install && pm2 reload ecosystem.config.js --env production',
+      'pre-setup': '',
+    },
+  },
+};
