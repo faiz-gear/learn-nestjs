@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 import { Article } from './entities/article.entity';
 import { RedisService } from 'src/redis/redis.service';
 
-const INVALID_ACCESS_INTERVAL = 3;
+const INVALID_ACCESS_INTERVAL = 60 * 10; // 10分钟
 
 @Injectable()
 export class ArticleService {
@@ -28,9 +28,10 @@ export class ArticleService {
 
     const res = await this.redisService.hashGet(`article_${id}`);
     if (res.viewCount === undefined) {
+      // redis中没有存访问记录, 添加访问记录, 并记录方法的userId或者ip
       const article = await this.findOne(id);
       article.viewCount++;
-      // update比save更搞笑, save需要先select再update
+      // update比save更高效, save需要先select再update
       await this.entityManager.update(
         Article,
         { id },
@@ -56,7 +57,9 @@ export class ArticleService {
 
       return article.viewCount;
     } else {
+      // redis存在访问记录, 根据redis缓存判断该用户是否在访问有效时间内, 有效时间内则viewCount + 1
       const flag = await this.redisService.get(`user_${userId}_article_${id}`);
+      //
       if (flag) return res.viewCount;
 
       await this.redisService.hashSet(`article_${id}`, {
