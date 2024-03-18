@@ -1,0 +1,31 @@
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UniqueCode } from './entities/UniqueCode';
+import { UniqueCodeService } from './unique-code.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ShortLongMap } from './entities/ShortLongMap';
+import { ShortLongMapService } from './short-long-map.service';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'admin',
+      database: 'short_url',
+      synchronize: true,
+      logging: true,
+      entities: [UniqueCode, ShortLongMap],
+      poolSize: 10,
+      connectorPackage: 'mysql2',
+    }),
+    ScheduleModule.forRoot(),
+  ],
+  controllers: [AppController],
+  providers: [AppService, UniqueCodeService, ShortLongMapService],
+})
+export class AppModule {}
