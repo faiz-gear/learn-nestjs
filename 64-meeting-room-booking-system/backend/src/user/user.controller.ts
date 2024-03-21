@@ -51,63 +51,12 @@ export class UserController {
 
   @Post('login')
   async userLogin(@Body() loginUser: LoginUserDto) {
-    const vo = await this.userService.login(loginUser, false);
-
-    const accessToken = this.jwtService.sign(
-      {
-        userId: vo.userInfo.id,
-        username: vo.userInfo.username,
-        roles: vo.userInfo.roles,
-        permissions: vo.userInfo.permissions,
-      },
-      {
-        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_TIME'),
-      },
-    );
-
-    const refreshToken = this.jwtService.sign(
-      {
-        userId: vo.userInfo.id,
-      },
-      {
-        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_TIME'),
-      },
-    );
-
-    vo.accessToken = accessToken;
-    vo.refreshToken = refreshToken;
-
-    return vo;
+    return await this.userService.loginAndReturnToken(loginUser, false);
   }
 
   @Post('admin/login')
   async adminLogin(@Body() loginUser: LoginUserDto) {
-    const vo = await this.userService.login(loginUser, true);
-    const accessToken = this.jwtService.sign(
-      {
-        userId: vo.userInfo.id,
-        username: vo.userInfo.username,
-        roles: vo.userInfo.roles,
-        permissions: vo.userInfo.permissions,
-      },
-      {
-        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_TIME'),
-      },
-    );
-
-    const refreshToken = this.jwtService.sign(
-      {
-        userId: vo.userInfo.id,
-      },
-      {
-        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_TIME'),
-      },
-    );
-
-    vo.accessToken = accessToken;
-    vo.refreshToken = refreshToken;
-
-    return vo;
+    return await this.userService.loginAndReturnToken(loginUser, true);
   }
 
   @Get('refresh-token')

@@ -161,6 +161,36 @@ export class UserService {
     return vo;
   }
 
+  async loginAndReturnToken(loginUser: LoginUserDto, isAdmin: boolean) {
+    const vo = await this.login(loginUser, isAdmin);
+
+    const accessToken = this.jwtService.sign(
+      {
+        userId: vo.userInfo.id,
+        username: vo.userInfo.username,
+        roles: vo.userInfo.roles,
+        permissions: vo.userInfo.permissions,
+      },
+      {
+        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_TIME'),
+      },
+    );
+
+    const refreshToken = this.jwtService.sign(
+      {
+        userId: vo.userInfo.id,
+      },
+      {
+        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_TIME'),
+      },
+    );
+
+    vo.accessToken = accessToken;
+    vo.refreshToken = refreshToken;
+
+    return vo;
+  }
+
   async findUserById(id: number, isAdmin) {
     const foundUser = await this.userRepository.findOne({
       where: {
