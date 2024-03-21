@@ -7,15 +7,13 @@ export class EmailService {
   private transporter: Transporter;
 
   constructor(private configService: ConfigService) {
-    const user = this.configService.get('EMAIL_USER');
-    console.log(
-      '🚀 ~ file: email.service.ts ~ line 11 ~ EmailService ~ constructor ~ user',
-      this.configService.get('EMAIL_NAME'),
-    );
-    const pass = this.configService.get('EMAIL_PASS');
+    const host = this.configService.get('NODEMAILER_HOST');
+    const port = this.configService.get('NODEMAILER_PORT');
+    const user = this.configService.get('NODEMAILER_AUTH_USER');
+    const pass = this.configService.get('NODEMAILER_AUTH_PASS');
     this.transporter = createTransport({
-      host: 'smtp.qq.com',
-      port: 587,
+      host,
+      port,
       secure: false,
       auth: {
         user,
@@ -27,8 +25,8 @@ export class EmailService {
   async sendMail({ to, subject, html }) {
     await this.transporter.sendMail({
       from: {
-        name: this.configService.get('EMAIL_NAME'),
-        address: this.configService.get('EMAIL_USER'),
+        name: this.configService.get('NODEMAILER_NAME'),
+        address: this.configService.get('NODEMAILER_AUTH_USER'),
       },
       to,
       subject,

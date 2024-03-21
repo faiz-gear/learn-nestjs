@@ -12,8 +12,8 @@ export class EmailService {
       port: 587,
       secure: false,
       auth: {
-        user: this.configService.get('EMAIL_USER'),
-        pass: this.configService.get('EMAIL_PASS'),
+        user: this.configService.get('NODEMAILER_AUTH_USER'),
+        pass: this.configService.get('NODEMAILER_AUTH_PASS'),
       },
     });
   }
@@ -21,8 +21,8 @@ export class EmailService {
   async sendMail({ to, subject, html }) {
     await this.transporter.sendMail({
       from: {
-        name: this.configService.get('EMAIL_NAME'),
-        address: this.configService.get('EMAIL_USER'),
+        name: this.configService.get('NODEMAILER_NAME'),
+        address: this.configService.get('NODEMAILER_AUTH_USER'),
       },
       to,
       subject,

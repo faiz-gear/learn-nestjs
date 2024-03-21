@@ -33,7 +33,7 @@ export class User {
     length: 50,
     comment: '昵称',
   })
-  nickname: string;
+  nickName: string;
 
   @Column({
     length: 50,

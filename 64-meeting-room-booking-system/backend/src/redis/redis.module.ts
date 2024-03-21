@@ -1,16 +1,24 @@
 import { Module, Global } from '@nestjs/common';
 import { RedisService } from './redis.service';
 import { RedisModule as IORedisModule } from '@nestjs-modules/ioredis';
+import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Module({
   imports: [
-    IORedisModule.forRoot({
-      type: 'single',
-      url: 'redis://localhost:6379/1',
-      options: {
-        db: 1,
+    IORedisModule.forRootAsync({
+      useFactory: (configService: ConfigService) => {
+        return {
+          type: 'single',
+          url: `redis://${configService.get(
+            'REDIS_SERVER_HOST',
+          )}:${configService.get('REDIS_SERVER_PORT')}`,
+          options: {
+            db: configService.get('REDIS_SERVER_DB'),
+          },
+        };
       },
+      inject: [ConfigService],
     }),
   ],
   providers: [RedisService],

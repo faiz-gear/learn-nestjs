@@ -3,6 +3,9 @@ import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { EmailService } from 'src/email/email.service';
+import { LoginUserDto } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('user')
 export class UserController {
@@ -13,6 +16,12 @@ export class UserController {
 
   @Inject(EmailService)
   private emailService: EmailService;
+
+  @Inject(JwtService)
+  private jwtService: JwtService;
+
+  @Inject(ConfigService)
+  private configService: ConfigService;
 
   @Post('register')
   async register(@Body() registerUser: RegisterUserDto) {
@@ -32,5 +41,82 @@ export class UserController {
     });
 
     return '验证码已发送';
+  }
+
+  @Get('init-data')
+  async initData() {
+    await this.userService.initData();
+    return 'done';
+  }
+
+  @Post('login')
+  async userLogin(@Body() loginUser: LoginUserDto) {
+    const vo = await this.userService.login(loginUser, false);
+
+    const accessToken = this.jwtService.sign(
+      {
+        userId: vo.userInfo.id,
+        username: vo.userInfo.username,
+        roles: vo.userInfo.roles,
+        permissions: vo.userInfo.permissions,
+      },
+      {
+        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_TIME'),
+      },
+    );
+
+    const refreshToken = this.jwtService.sign(
+      {
+        userId: vo.userInfo.id,
+      },
+      {
+        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_TIME'),
+      },
+    );
+
+    vo.accessToken = accessToken;
+    vo.refreshToken = refreshToken;
+
+    return vo;
+  }
+
+  @Post('admin/login')
+  async adminLogin(@Body() loginUser: LoginUserDto) {
+    const vo = await this.userService.login(loginUser, true);
+    const accessToken = this.jwtService.sign(
+      {
+        userId: vo.userInfo.id,
+        username: vo.userInfo.username,
+        roles: vo.userInfo.roles,
+        permissions: vo.userInfo.permissions,
+      },
+      {
+        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRES_TIME'),
+      },
+    );
+
+    const refreshToken = this.jwtService.sign(
+      {
+        userId: vo.userInfo.id,
+      },
+      {
+        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRES_TIME'),
+      },
+    );
+
+    vo.accessToken = accessToken;
+    vo.refreshToken = refreshToken;
+
+    return vo;
+  }
+
+  @Get('refresh-token')
+  async userRefreshToken(@Query('refreshToken') refreshToken: string) {
+    return await this.userService.refreshToken(refreshToken, false);
+  }
+
+  @Get('admin/refresh-token')
+  async adminRefreshToken(@Query('refreshToken') refreshToken: string) {
+    return await this.userService.refreshToken(refreshToken, true);
   }
 }
