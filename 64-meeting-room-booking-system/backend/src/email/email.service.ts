@@ -7,13 +7,6 @@ export class EmailService {
   transporter: Transporter;
 
   constructor(private readonly configService: ConfigService) {
-    console.log(
-      this.configService.get('NODEMAILER_HOST'),
-      this.configService.get('NODEMAILER_PORT'),
-      this.configService.get('NODEMAILER_AUTH_USER'),
-      this.configService.get('NODEMAILER_AUTH_PASS'),
-      this.configService.get('NODEMAILER_NAME'),
-    );
     this.transporter = createTransport({
       host: this.configService.get('NODEMAILER_HOST'),
       port: this.configService.get('NODEMAILER_PORT'),

@@ -16,6 +16,7 @@ export const REQUIRE_LOGIN_TOKEN = 'require-login';
 interface JwtUserData {
   userId: number;
   username: string;
+  email: string;
   roles: string[];
   permissions: Permission[];
 }
