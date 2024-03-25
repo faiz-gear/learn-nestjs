@@ -19,6 +19,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RefreshTokenVo } from './vo/refresh-token.vo';
+import { UserListVo } from './vo/user-list.vo';
 
 const generateUserVo = (user: User) => {
   const vo = new LoginUserVo();
@@ -211,10 +213,6 @@ export class UserService {
   async refreshToken(refreshToken: string, isAdmin) {
     try {
       const data = await this.jwtService.verify(refreshToken);
-      console.log(
-        '🚀 ~ file: user.service.ts ~ line 181 ~ UserService ~ refreshToken ~ data',
-        data,
-      );
       const user = await this.findUserById(data.userId, isAdmin);
       const newAccessToken = this.jwtService.sign(
         {
@@ -238,10 +236,11 @@ export class UserService {
         },
       );
 
-      return {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-      };
+      const vo = new RefreshTokenVo();
+      vo.accessToken = newAccessToken;
+      vo.refreshToken = newRefreshToken;
+
+      return vo;
     } catch (err) {
       throw new HttpException('refreshToken无效', HttpStatus.UNAUTHORIZED);
     }
@@ -311,7 +310,7 @@ export class UserService {
       return '用户信息修改成功';
     } catch (e) {
       this.logger.error(e, UserService);
-      return '用户信息修改成功';
+      return '用户信息修改失败';
     }
   }
 
@@ -357,9 +356,10 @@ export class UserService {
       where: condition,
     });
 
-    return {
-      users,
-      totalCount,
-    };
+    const vo = new UserListVo();
+    vo.users = users;
+    vo.totalCount = totalCount;
+
+    return vo;
   }
 }
