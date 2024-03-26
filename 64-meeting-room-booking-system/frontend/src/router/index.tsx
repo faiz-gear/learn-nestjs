@@ -1,7 +1,7 @@
 import { RouteObject, createBrowserRouter } from 'react-router-dom'
 import ErrorPage from '../components/error-page'
 import Login from '../pages/login'
-import Register from '../components/register'
+import Register from '../pages/register'
 import UpdatePassword from '../components/update-password'
 
 const routes: RouteObject[] = [

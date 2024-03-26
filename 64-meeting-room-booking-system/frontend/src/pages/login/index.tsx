@@ -19,6 +19,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { login } from '@/service/login'
 import { useToast } from '@/components/ui/use-toast'
+import { useNavigate } from 'react-router-dom'
 
 const formSchema = z.object({
   username: z
@@ -37,6 +38,7 @@ const formSchema = z.object({
 
 const Login: FC = () => {
   const { toast } = useToast()
+  const navigate = useNavigate()
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,6 +60,7 @@ const Login: FC = () => {
       toast({
         title: '登录成功'
       })
+      navigate('/')
     } else {
       toast({
         title: '登录失败',
@@ -118,7 +121,7 @@ const Login: FC = () => {
                           </div>
                         </FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Input type="password" {...field} />
                         </FormControl>
                         {/* <FormDescription>This is your public display name.</FormDescription> */}
                         <FormMessage />
@@ -133,7 +136,7 @@ const Login: FC = () => {
             </form>
             <div className="mt-4 text-center text-sm">
               没有账号?
-              <a href="#" className="underline">
+              <a href="#" className="underline" onClick={() => navigate('/register')}>
                 注册
               </a>
             </div>
