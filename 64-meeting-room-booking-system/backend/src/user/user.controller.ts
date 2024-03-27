@@ -215,7 +215,8 @@ export class UserController {
     return vo;
   }
 
-  @ApiBearerAuth()
+  // 在没有登录的情况下也需要支持修改密码
+  // @ApiBearerAuth()
   @ApiBody({
     type: UpdateUserPasswordDto,
   })
@@ -230,15 +231,15 @@ export class UserController {
     type: String,
   })
   @Post(['update-password', 'admin/update-password'])
-  @RequireLogin()
+  // @RequireLogin()
   async updatePassword(
-    @UserInfo('userId') userId: number,
+    // @UserInfo('userId') userId: number,
     @Body() passwordDto: UpdateUserPasswordDto,
   ) {
-    return await this.userService.updatePassword(userId, passwordDto);
+    return await this.userService.updatePassword(passwordDto);
   }
 
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @ApiQuery({
     name: 'email',
     type: String,
@@ -257,16 +258,16 @@ export class UserController {
     type: String,
   })
   @Get('update-password-captcha')
-  @RequireLogin()
+  // @RequireLogin()
   async getUpdatePasswordCaptcha(
     @Query('email') email: string,
-    @UserInfo('email') userInfoEmail: string,
+    // @UserInfo('email') userInfoEmail: string,
   ) {
-    if (email !== userInfoEmail)
-      throw new HttpException(
-        '接收验证码邮箱与用户绑定的邮箱信息不一致',
-        HttpStatus.BAD_REQUEST,
-      );
+    // if (email !== userInfoEmail)
+    //   throw new HttpException(
+    //     '接收验证码邮箱与用户绑定的邮箱信息不一致',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
 
     // const code = Math.random().toString(36).slice(-6);
 

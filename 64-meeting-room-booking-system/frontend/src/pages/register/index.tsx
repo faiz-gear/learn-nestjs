@@ -70,7 +70,7 @@ const Register: FC<PropsWithChildren<IRegisterProps>> = () => {
 
   const [remainingTime, setRemainingTime] = useState(0)
   const sendCaptcha = useCallback(async () => {
-    form.trigger()
+    await form.trigger()
     if (form.formState.isValid === false) return
     const email = form.getValues('email')
     const res = await getRegisterCaptcha(email)

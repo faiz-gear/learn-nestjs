@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 // import { Label } from '@/components/ui/label'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input'
 import { login } from '@/service/login'
 import { useToast } from '@/components/ui/use-toast'
 import { useNavigate } from 'react-router-dom'
+import UpdatePassword from '@/components/update-password'
 
 const formSchema = z.object({
   username: z
@@ -72,6 +73,8 @@ const Login: FC = () => {
     }
   }
 
+  const [updatePwdOpen, setUpdatePwdOpen] = useState(false)
+
   return (
     <div className="flex items-center h-full">
       <Card className="mx-auto max-w-sm">
@@ -117,7 +120,11 @@ const Login: FC = () => {
                         <FormLabel>
                           <div className="flex items-center">
                             <span>密码</span>
-                            <a href="#" className="ml-auto inline-block text-sm underline">
+                            <a
+                              href="#"
+                              className="ml-auto inline-block text-sm underline"
+                              onClick={() => setUpdatePwdOpen(true)}
+                            >
                               忘记密码?
                             </a>
                           </div>
@@ -145,6 +152,12 @@ const Login: FC = () => {
           </Form>
         </CardContent>
       </Card>
+      <UpdatePassword
+        modal={false}
+        open={updatePwdOpen}
+        onOpenChange={setUpdatePwdOpen}
+        onSuccess={() => setUpdatePwdOpen(false)}
+      />
     </div>
   )
 }
