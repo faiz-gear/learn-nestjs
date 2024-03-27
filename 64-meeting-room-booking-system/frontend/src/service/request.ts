@@ -5,6 +5,13 @@ const request = axios.create({
   timeout: 3000
 })
 
+request.interceptors.request.use((res) => {
+  if (localStorage.getItem('accessToken')) {
+    res.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
+  }
+  return res
+})
+
 request.interceptors.response.use(
   (res) => {
     return res

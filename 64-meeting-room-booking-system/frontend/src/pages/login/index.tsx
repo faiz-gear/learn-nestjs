@@ -60,6 +60,8 @@ const Login: FC = () => {
       toast({
         title: '登录成功'
       })
+      localStorage.setItem('accessToken', res.data.data.accessToken)
+      localStorage.setItem('refreshToken', res.data.data.refreshToken)
       navigate('/')
     } else {
       toast({
