@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback } from 'react'
 import type { PropsWithChildren, FC } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { getUpdatePasswordCaptcha, updatePassword } from '@/service/user'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
+import Captcha from '../captcha'
 
 interface IUpdatePasswordProps extends DialogPrimitive.DialogProps {
   onSuccess?: () => void
@@ -63,38 +64,12 @@ const UpdatePassword: FC<PropsWithChildren<IUpdatePasswordProps>> = (props) => {
     }
   })
 
-  const [remainingTime, setRemainingTime] = useState(0)
-  const sendCaptcha = useCallback(async () => {
-    await form.trigger()
-    if (form.formState.isValid === false) return
-    const email = form.getValues('email')
-    const res = await getUpdatePasswordCaptcha(email)
-    if (res.data.code === 200 || res.data.code === 201) {
-      toast({
-        title: '验证码已发送'
-      })
-
-      let time = 60
-      setRemainingTime(time)
-      const timer = setInterval(() => {
-        time--
-        setRemainingTime(time)
-        if (time === 0) {
-          clearInterval(timer)
-        }
-      }, 1000)
-
-      return () => {
-        clearInterval(timer)
-      }
-    } else {
-      toast({
-        title: '发送验证码失败',
-        description: res.data.data,
-        variant: 'destructive'
-      })
-    }
-  }, [form, toast])
+  const beforeSend = useCallback(async () => {
+    const isValid = await form.trigger()
+    if (!isValid) return Promise.reject()
+    return form.getValues('email')
+  }, [form])
+  const getCaptcha = useCallback(async (email: string | undefined) => await getUpdatePasswordCaptcha(email!), [])
 
   const onSubmit = useCallback(
     async (values: z.infer<typeof formSchema>) => {
@@ -195,27 +170,8 @@ const UpdatePassword: FC<PropsWithChildren<IUpdatePasswordProps>> = (props) => {
                   />
                 </div>
 
-                <div className="flex gap-4">
-                  <div className="flex-[2] grid gap-2">
-                    <FormField
-                      control={form.control}
-                      name="captcha"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>验证码</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="flex-1 flex items-end">
-                    <Button type="button" disabled={remainingTime !== 0} onClick={sendCaptcha}>
-                      {remainingTime === 0 ? '发送验证码' : `${remainingTime}秒后重新发送`}
-                    </Button>
-                  </div>
+                <div className="grid  items-center gap-4">
+                  <Captcha control={form.control} fieldName="captcha" beforeSend={beforeSend} getCaptcha={getCaptcha} />
                 </div>
                 <Button type="submit" className="w-full">
                   修改

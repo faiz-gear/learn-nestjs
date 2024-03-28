@@ -15,6 +15,7 @@ import { Outlet, To, useLocation, useNavigate } from 'react-router-dom'
 import cls from 'classnames'
 import { Suspense, useState } from 'react'
 import UpdatePassword from '@/components/update-password'
+import UpdateInfo from '@/components/update-info'
 
 interface ILayoutProps {
   menus: { label: string; href: To }[]
@@ -31,6 +32,7 @@ export function Layout(props: ILayoutProps) {
   const navigate = useNavigate()
 
   const [resetPwdDialogOpen, setResetPwdDialogOpen] = useState(false)
+  const [updateInfoDialogOpen, setUpdateInfoDialogOpen] = useState(false)
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -104,7 +106,7 @@ export function Layout(props: ILayoutProps) {
               <DropdownMenuItem>设置</DropdownMenuItem>
               <DropdownMenuItem>支持</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>个人信息</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setUpdateInfoDialogOpen(true)}>个人信息</DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate('/login')}>退出登录</DropdownMenuItem>
               <DropdownMenuItem onClick={() => setResetPwdDialogOpen(true)}>修改密码</DropdownMenuItem>
             </DropdownMenuContent>
@@ -115,6 +117,7 @@ export function Layout(props: ILayoutProps) {
         <Suspense fallback={'loading...'}>
           <Outlet />
           <UpdatePassword open={resetPwdDialogOpen} onOpenChange={setResetPwdDialogOpen} />
+          <UpdateInfo open={updateInfoDialogOpen} onOpenChange={setUpdateInfoDialogOpen} />
         </Suspense>
       </main>
     </div>
