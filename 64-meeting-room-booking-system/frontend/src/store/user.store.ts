@@ -2,7 +2,8 @@ import { shallow } from 'zustand/shallow'
 import { createWithEqualityFn } from 'zustand/traditional'
 
 type TUserState = {
-  userInfo: Nullable<Record<string, string>>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  userInfo: Nullable<Record<string, any>>
 }
 
 type TUserActions = {

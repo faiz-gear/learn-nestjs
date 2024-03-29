@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosRequestConfig } from 'axios'
+import { IResponse } from './type'
 
 const request = axios.create({
   baseURL: 'http://localhost:3000',
@@ -23,8 +26,13 @@ request.interceptors.request.use((res) => {
 request.interceptors.response.use(
   (response) => {
     if (response.data.code === 200 || response.data.code === 201) {
-      return response
+      return response.data
     } else {
+      toast({
+        title: '请求发生错误',
+        description: response.data.data,
+        variant: 'destructive'
+      })
       return Promise.reject(response.data.data)
     }
   },
@@ -62,15 +70,25 @@ request.interceptors.response.use(
         }, 1500)
       }
     } else {
+      toast({
+        title: '请求发生错误',
+        description: data.message || error.response.message,
+        variant: 'destructive'
+      })
       return Promise.reject(error.response)
     }
   }
 )
 
-const { get, post, delete: del, put } = request
+const get = <T = any>(url: string, config?: AxiosRequestConfig) => request.get<any, IResponse<T>>(url, config)
+const post = <T = any>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
+  request.post<any, IResponse<T>>(url, data, config)
+const del = <T = any>(url: string, config?: AxiosRequestConfig) => request.delete<any, IResponse<T>>(url, config)
+const put = <T = any>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
+  request.put<any, IResponse<T>>(url, data, config)
 
 async function refreshToken() {
-  const res = await get('/user/refresh', {
+  const res = await request.get('/user/refresh', {
     params: {
       refresh_token: localStorage.getItem('refresh_token')
     }

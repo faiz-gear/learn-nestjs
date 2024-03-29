@@ -81,7 +81,7 @@ const Register: FC<PropsWithChildren<IRegisterProps>> = () => {
     async (values: z.infer<typeof formSchema>) => {
       console.log(values)
       const res = await register(values)
-      if (res.data.code === 200 || res.data.code === 201) {
+      if (res.code === 200 || res.code === 201) {
         toast({
           title: '注册成功'
         })
@@ -91,7 +91,7 @@ const Register: FC<PropsWithChildren<IRegisterProps>> = () => {
       } else {
         toast({
           title: '注册失败',
-          description: res.data.data,
+          description: res.data,
           variant: 'destructive'
         })
       }

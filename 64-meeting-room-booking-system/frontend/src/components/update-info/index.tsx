@@ -20,6 +20,11 @@ import { getUpdateInfoCaptcha } from '@/service/user'
 import Captcha from '../captcha'
 
 export interface IUpdatePasswordProps extends DialogPrimitive.DialogProps {
+  defaultValues?: {
+    headPic: string
+    nickName: string
+    email: string
+  }
   onSuccess?: () => void
 }
 
@@ -39,9 +44,11 @@ const formSchema = z.object({
 })
 
 const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
+  const { defaultValues } = props
+  console.log('🚀 ~ file: index.tsx ~ line 48 ~ defaultValues', defaultValues)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: defaultValues ?? {
       headPic: '',
       nickName: '',
       email: ''
@@ -98,15 +105,15 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
                             className="hidden"
                             onClick={(e) => {
                               console.log('click')
-                              e.preventDefault()
+                              e.stopPropagation()
                             }}
                           />
                         </FormControl>
                         <div className="flex justify-center">
-                          <Button variant="link" onClick={selectFile}>
+                          <Button type="button" variant="link" onClick={selectFile}>
                             上传头像
                           </Button>
-                          <Button variant="link" className="text-destructive" onClick={selectFile}>
+                          <Button type="button" variant="link" className="text-destructive" onClick={selectFile}>
                             删除头像
                           </Button>
                         </div>

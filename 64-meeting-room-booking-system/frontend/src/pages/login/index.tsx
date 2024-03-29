@@ -57,17 +57,17 @@ const Login: FC = () => {
 
     const res = await login(values.username, values.password)
 
-    if (res.data.code === 200 || res.data.code === 201) {
+    if (res.code === 200 || res.code === 201) {
       toast({
         title: '登录成功'
       })
-      localStorage.setItem('accessToken', res.data.data.accessToken)
-      localStorage.setItem('refreshToken', res.data.data.refreshToken)
+      localStorage.setItem('accessToken', res.data.accessToken)
+      localStorage.setItem('refreshToken', res.data.refreshToken)
       navigate('/')
     } else {
       toast({
         title: '登录失败',
-        description: res.data.data,
+        description: res.data,
         variant: 'destructive'
       })
     }

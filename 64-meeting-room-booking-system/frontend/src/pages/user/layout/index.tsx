@@ -16,6 +16,9 @@ import cls from 'classnames'
 import { Suspense, useState } from 'react'
 import UpdatePassword from '@/components/update-password'
 import UpdateInfo from '@/components/update-info'
+import { useUserInfo } from '@/service/hooks/useUserInfo'
+import { useUserStore } from '@/store/user.store'
+import { pick } from 'radash'
 
 interface ILayoutProps {
   menus: { label: string; href: To }[]
@@ -30,6 +33,9 @@ export function Layout(props: ILayoutProps) {
   const { menus } = props
   const location = useLocation()
   const navigate = useNavigate()
+  const { userInfo } = useUserInfo()
+  const setUserInfo = useUserStore((state) => state.setUserInfo)
+  if (userInfo) setUserInfo(userInfo)
 
   const [resetPwdDialogOpen, setResetPwdDialogOpen] = useState(false)
   const [updateInfoDialogOpen, setUpdateInfoDialogOpen] = useState(false)
@@ -117,7 +123,13 @@ export function Layout(props: ILayoutProps) {
         <Suspense fallback={'loading...'}>
           <Outlet />
           <UpdatePassword open={resetPwdDialogOpen} onOpenChange={setResetPwdDialogOpen} />
-          <UpdateInfo open={updateInfoDialogOpen} onOpenChange={setUpdateInfoDialogOpen} />
+          {userInfo && (
+            <UpdateInfo
+              defaultValues={pick(userInfo, ['email', 'headPic', 'nickName'])}
+              open={updateInfoDialogOpen}
+              onOpenChange={setUpdateInfoDialogOpen}
+            />
+          )}
         </Suspense>
       </main>
     </div>
