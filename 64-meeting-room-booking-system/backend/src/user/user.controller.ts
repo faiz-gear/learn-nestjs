@@ -5,9 +5,11 @@ import {
   Get,
   Query,
   Inject,
-  HttpException,
   HttpStatus,
   DefaultValuePipe,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -29,6 +31,9 @@ import {
 import { LoginUserVo } from './vo/login-user.vo';
 import { RefreshTokenVo } from './vo/refresh-token.vo';
 import { UserListVo } from './vo/user-list.vo';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UploadAvatarDto } from './dto/upload-avatar.dto';
+import { storage } from 'src/uploaded-file-storage';
 
 @ApiTags('用户')
 @Controller('user')
@@ -315,38 +320,48 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @ApiQuery({
-    name: 'email',
-    type: String,
-    description: '邮箱',
-    required: true,
-    example: 'xxx@xx.com',
+  @ApiBody({
+    type: UploadAvatarDto,
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '图片路径',
+    type: String,
+  })
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      dest: './uploads',
+      storage: storage,
+      limits: {
+        fileSize: 1024 * 1024 * 3,
+      },
+      fileFilter(req, file, callback) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          return callback(new BadRequestException('只能上传图片!'), false);
+        }
+        callback(null, true);
+      },
+    }),
+  )
+  @RequireLogin()
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+    return file.path;
+  }
+
+  @ApiBearerAuth()
   @ApiResponse({
     status: HttpStatus.OK,
     description: '验证码已发送',
     type: String,
   })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: '接收验证码邮箱与用户绑定的邮箱信息不一致',
-    type: String,
-  })
   @Get('update-user-captcha')
   @RequireLogin()
-  async getUpdateUserCaptcha(
-    @Query('email') email: string,
-    @UserInfo('email') userInfoEmail: string,
-  ) {
-    if (email !== userInfoEmail)
-      throw new HttpException(
-        '接收验证码邮箱与用户绑定的邮箱信息不一致',
-        HttpStatus.BAD_REQUEST,
-      );
-
+  async getUpdateUserCaptcha(@UserInfo('email') userInfoEmail: string) {
     return await this.getCaptcha(
       'update_user_captcha',
-      email,
+      userInfoEmail,
       '修改用户信息验证码',
     );
   }

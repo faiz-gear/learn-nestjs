@@ -22,3 +22,9 @@ export const updateInfo = async (data: TUpdateInfo) => {
 export const getUpdateInfoCaptcha = async () => {
   return await get('/user/update-user-captcha')
 }
+
+export const uploadAvatar = async (file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  return await post<string>('/user/upload', formData)
+}

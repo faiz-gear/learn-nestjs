@@ -24,59 +24,67 @@ request.interceptors.request.use((res) => {
 })
 
 request.interceptors.response.use(
-  (response) => {
+  async (response) => {
     if (response.data.code === 200 || response.data.code === 201) {
       return response.data
     } else {
+      const { data, config } = response
+
+      try {
+        if (data.code === 401 && !config.url?.includes('/user/refresh')) {
+          // 除了刷新token的请求, 其他接口返回401时, 刷新token
+          if (refreshing) {
+            // 正在刷新token, 将请求放入队列
+            return new Promise((resolve) => {
+              queue.push({
+                config,
+                resolve
+              })
+            })
+          }
+
+          refreshing = true
+          const res = await refreshToken()
+          refreshing = false
+
+          // 刷新token成功, 重新发起之前的请求
+          if (res.status === 200) {
+            queue.forEach(({ config, resolve }) => {
+              resolve(request(config))
+            })
+            return request(config)
+          }
+        }
+      } catch (error: any) {
+        toast({
+          title: '请求发生错误',
+          description: error.data || error.message,
+          variant: 'destructive'
+        })
+        return Promise.reject(error)
+      }
       toast({
         title: '请求发生错误',
         description: response.data.data,
         variant: 'destructive'
       })
-      return Promise.reject(response.data.data)
-    }
-  },
-  async (error) => {
-    if (!error.response) {
-      return Promise.reject(error)
-    }
-    const { data, config } = error.response
-
-    if (refreshing) {
-      return new Promise((resolve) => {
-        queue.push({
-          config,
-          resolve
-        })
-      })
-    }
-
-    if (data.code === 401 && !config.url.includes('/user/refresh')) {
-      refreshing = true
-
-      const res = await refreshToken()
-
-      refreshing = false
-
-      if (res.status === 200) {
-        queue.forEach(({ config, resolve }) => {
-          resolve(request(config))
-        })
-
-        return request(config)
-      } else {
+      // 如果刷新token失败, 则跳转到登录页
+      if (config.url?.includes('/user/refresh')) {
         setTimeout(() => {
           window.location.href = '/login'
         }, 1500)
       }
-    } else {
-      toast({
-        title: '请求发生错误',
-        description: data.message || error.response.message,
-        variant: 'destructive'
-      })
-      return Promise.reject(error.response)
+
+      throw new Error(response.data.data)
     }
+  },
+  async (error) => {
+    toast({
+      title: '请求发生错误',
+      description: error.data || error.message,
+      variant: 'destructive'
+    })
+    return Promise.reject(error)
   }
 )
 
@@ -88,7 +96,7 @@ const put = <T = any>(url: string, data?: unknown, config?: AxiosRequestConfig) 
   request.put<any, IResponse<T>>(url, data, config)
 
 async function refreshToken() {
-  const res = await request.get('/user/refresh', {
+  const res = await request.get('/user/refresh-token', {
     params: {
       refresh_token: localStorage.getItem('refresh_token')
     }

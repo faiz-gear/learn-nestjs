@@ -19,6 +19,7 @@ import UpdateInfo from '@/components/update-info'
 import { useUserInfo } from '@/service/hooks/useUserInfo'
 import { useUserStore } from '@/store/user.store'
 import { pick } from 'radash'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 interface ILayoutProps {
   menus: { label: string; href: To }[]
@@ -102,7 +103,15 @@ export function Layout(props: ILayoutProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
+                {userInfo?.headPic ? (
+                  <Avatar>
+                    <AvatarImage src={userInfo.headPic} alt="avatar" />
+                    <AvatarFallback>头像</AvatarFallback>
+                  </Avatar>
+                ) : (
+                  <CircleUser className="h-5 w-5" />
+                )}
+
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>

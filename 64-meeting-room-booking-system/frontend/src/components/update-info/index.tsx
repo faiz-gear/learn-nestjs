@@ -1,14 +1,7 @@
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { FC, memo, useCallback, useRef } from 'react'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input, InputProps } from '@/components/ui/input'
+import { FC, memo, useCallback, useRef, useState } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { Separator } from '../ui/separator'
 import { z } from 'zod'
@@ -16,8 +9,10 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import { getUpdateInfoCaptcha } from '@/service/user'
+import { getUpdateInfoCaptcha, updateInfo, uploadAvatar } from '@/service/user'
 import Captcha from '../captcha'
+import { useToast } from '../ui/use-toast'
+import { omit } from 'radash'
 
 export interface IUpdatePasswordProps extends DialogPrimitive.DialogProps {
   defaultValues?: {
@@ -29,7 +24,7 @@ export interface IUpdatePasswordProps extends DialogPrimitive.DialogProps {
 }
 
 const formSchema = z.object({
-  headPic: z.optional(z.string()),
+  headPic: z.optional(z.string()).readonly(),
   nickName: z.optional(z.string()),
   email: z
     .string({
@@ -45,23 +40,32 @@ const formSchema = z.object({
 
 const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
   const { defaultValues } = props
-  console.log('🚀 ~ file: index.tsx ~ line 48 ~ defaultValues', defaultValues)
+  const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: defaultValues ?? {
-      headPic: '',
-      nickName: '',
-      email: ''
+    defaultValues: {
+      headPic: defaultValues?.headPic ?? '',
+      nickName: defaultValues?.nickName ?? '',
+      email: defaultValues?.email ?? ''
     }
   })
 
-  const onSubmit = useCallback(async (values: z.infer<typeof formSchema>) => {
-    console.log('🚀 ~ file: index.tsx ~ line 45 ~ onSubmit ~ values', values)
-  }, [])
-
   const uploadAvatarRef = useRef<HTMLInputElement>(null)
+  const [currentSelectedFile, setCurrentSelectedFile] = useState<File | null>(null)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const selectFile = useCallback(() => {
     uploadAvatarRef.current?.click()
+  }, [])
+  const handleFileInputChange = useCallback<NonNullable<InputProps['onChange']>>((e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setCurrentSelectedFile(file)
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setAvatarUrl(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
   }, [])
 
   const beforeSend = useCallback(async () => {
@@ -70,6 +74,32 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
     return undefined
   }, [form])
   const getCaptcha = useCallback(async () => await getUpdateInfoCaptcha(), [])
+
+  const onSubmit = useCallback(
+    async (values: z.infer<typeof formSchema>) => {
+      let headPic: string | undefined
+      if (currentSelectedFile) {
+        const { data: newHeadPic } = await uploadAvatar(currentSelectedFile)
+        headPic = newHeadPic
+      } else {
+        headPic = values.headPic
+      }
+      const res = await updateInfo({ ...values, headPic })
+
+      if (res.code === 200 || res.code === 201) {
+        toast({
+          title: '更新个人信息成功'
+        })
+      } else {
+        toast({
+          title: '更新个人信息失败',
+          description: res.data,
+          variant: 'destructive'
+        })
+      }
+    },
+    [toast, currentSelectedFile]
+  )
 
   return (
     <Dialog {...props}>
@@ -88,17 +118,17 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
                   name="headPic"
                   render={({ field }) => (
                     <FormItem>
-                      <div className="flex flex-col items-center">
+                      <div className="flex flex-col items-center gap-2">
                         <Avatar className="w-20 h-20">
                           <AvatarImage
-                            src={field.value || 'https://avatars.githubusercontent.com/u/70053309?v=4'}
+                            src={avatarUrl || field.value || 'https://avatars.githubusercontent.com/u/70053309?v=4'}
                             alt="@faiz-gear"
                           />
                           <AvatarFallback>头像</AvatarFallback>
                         </Avatar>
                         <FormControl>
                           <Input
-                            {...field}
+                            {...omit(field, ['value'])}
                             ref={uploadAvatarRef}
                             placeholder="头像"
                             type="file"
@@ -107,13 +137,21 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
                               console.log('click')
                               e.stopPropagation()
                             }}
+                            onChange={(e) => {
+                              handleFileInputChange(e)
+                            }}
                           />
                         </FormControl>
                         <div className="flex justify-center">
-                          <Button type="button" variant="link" onClick={selectFile}>
+                          <Button type="button" variant="link" className="outline-none" onClick={selectFile}>
                             上传头像
                           </Button>
-                          <Button type="button" variant="link" className="text-destructive" onClick={selectFile}>
+                          <Button
+                            type="button"
+                            variant="link"
+                            className="outline-none text-destructive"
+                            onClick={selectFile}
+                          >
                             删除头像
                           </Button>
                         </div>
@@ -157,11 +195,9 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
                 <Captcha control={form.control} fieldName="captcha" beforeSend={beforeSend} getCaptcha={getCaptcha} />
               </div>
             </div>
-            <DialogFooter className="flex !justify-center">
-              <Button type="submit" className="w-full">
-                保存修改
-              </Button>
-            </DialogFooter>
+            <Button type="submit" className="w-full">
+              保存修改
+            </Button>
           </form>
         </Form>
       </DialogContent>
