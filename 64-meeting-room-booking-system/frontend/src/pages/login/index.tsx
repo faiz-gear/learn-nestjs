@@ -17,11 +17,13 @@ import {
   FormMessage
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { login } from '@/service/login'
+import { adminLogin, login } from '@/service/login'
 import { useToast } from '@/components/ui/use-toast'
 import { useNavigate } from 'react-router-dom'
 import UpdatePassword from '@/components/update-password'
 import Logo from '@/assets/logo.svg?react'
+import { useUserStore } from '@/store/user.store'
+import { getDynamicRoutes } from '@/router'
 
 const appName: string = import.meta.env.VITE_APP_SYSTEM_NAME
 
@@ -40,9 +42,16 @@ const formSchema = z.object({
     .min(6, '密码长度必须大于6个字符')
 })
 
-const Login: FC = () => {
+export interface ILoginProps {
+  isAdmin?: boolean
+}
+
+const Login: FC<ILoginProps> = (props) => {
+  const { isAdmin } = props
+
   const { toast } = useToast()
   const navigate = useNavigate()
+  const setRoutes = useUserStore((state) => state.setRoutes)
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -52,13 +61,15 @@ const Login: FC = () => {
     }
   })
 
+  const loginFunc = isAdmin ? adminLogin : login
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values)
 
-    const res = await login(values.username, values.password)
+    const res = await loginFunc(values.username, values.password)
 
     if (res.code === 200 || res.code === 201) {
       toast({
@@ -66,6 +77,10 @@ const Login: FC = () => {
       })
       localStorage.setItem('accessToken', res.data.accessToken)
       localStorage.setItem('refreshToken', res.data.refreshToken)
+
+      // 更新路由
+      setRoutes(getDynamicRoutes(res.data.userInfo.isAdmin))
+
       navigate('/')
     } else {
       toast({
@@ -86,7 +101,7 @@ const Login: FC = () => {
       </div>
       <Card className="mx-auto max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">{appName}</CardTitle>
+          <CardTitle className="text-2xl">{appName + (isAdmin && '——管理员')}</CardTitle>
           <CardDescription>输入你的账户密码登录</CardDescription>
         </CardHeader>
         <CardContent>
@@ -150,12 +165,15 @@ const Login: FC = () => {
                 </Button>
               </div>
             </form>
-            <div className="mt-4 text-center text-sm">
-              没有账号?
-              <a href="#" className="underline" onClick={() => navigate('/register')}>
-                注册
-              </a>
-            </div>
+
+            {!isAdmin && (
+              <div className="mt-4 text-center text-sm">
+                没有账号?
+                <a href="#" className="underline" onClick={() => navigate('/register')}>
+                  注册
+                </a>
+              </div>
+            )}
           </Form>
         </CardContent>
       </Card>

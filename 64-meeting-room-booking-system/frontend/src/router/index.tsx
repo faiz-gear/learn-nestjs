@@ -1,4 +1,4 @@
-import { RouteObject, createBrowserRouter } from 'react-router-dom'
+import { RouteObject } from 'react-router-dom'
 import ErrorPage from '../components/error-page'
 import Login from '../pages/login'
 import Register from '../pages/register'
@@ -6,10 +6,29 @@ import UpdatePassword from '../components/update-password'
 import { Layout } from '@/pages/user/layout'
 import Dashboard from '@/pages/user/c-pages/dashboard'
 import { lazy } from 'react'
+import Admin from '@/pages/admin'
 
 const MeetingRoomList = lazy(() => import('@/pages/user/c-pages/meeting-room-list'))
 
-const routes: RouteObject[] = [
+export const userRoutes: RouteObject[] = [
+  {
+    index: true,
+    element: <Dashboard />
+  },
+  {
+    path: 'meeting-room-list',
+    element: <MeetingRoomList />
+  }
+]
+
+export const adminRoutes: RouteObject[] = [
+  {
+    index: true,
+    element: <Admin />
+  }
+]
+
+const defaultRoutes: RouteObject[] = [
   {
     path: '/',
     element: (
@@ -27,20 +46,15 @@ const routes: RouteObject[] = [
       />
     ),
     errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        element: <Dashboard />
-      },
-      {
-        path: 'meeting-room-list',
-        element: <MeetingRoomList />
-      }
-    ]
+    children: []
   },
   {
     path: 'login',
     element: <Login />
+  },
+  {
+    path: 'admin/login',
+    element: <Login isAdmin />
   },
   {
     path: 'register',
@@ -52,6 +66,10 @@ const routes: RouteObject[] = [
   }
 ]
 
-const router = createBrowserRouter(routes)
+export const getDynamicRoutes = (isAdmin: boolean) => {
+  const dynamicRoutes = [...defaultRoutes]
+  dynamicRoutes[0].children = isAdmin ? adminRoutes : userRoutes
+  return dynamicRoutes
+}
 
-export default router
+export default defaultRoutes

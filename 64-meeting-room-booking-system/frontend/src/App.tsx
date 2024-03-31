@@ -1,11 +1,14 @@
-import { RouterProvider } from 'react-router-dom'
-import router from './router'
+import { useRoutes } from 'react-router-dom'
 import { Toaster } from './components/ui/toaster'
+import defaultRoutes from './router'
+import { Suspense } from 'react'
+import { useUserStore } from './store/user.store'
 
 function App() {
+  const dynamicRoutes = useUserStore((state) => state.routes)
   return (
     <>
-      <RouterProvider router={router} />
+      <Suspense fallback={'loading...'}>{useRoutes(dynamicRoutes.length ? dynamicRoutes : defaultRoutes)}</Suspense>
       <Toaster />
     </>
   )
