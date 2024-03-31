@@ -1,4 +1,4 @@
-import { CircleUser, Menu, CalendarDays, Search } from 'lucide-react'
+import { CircleUser, Menu, Search } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -20,6 +20,7 @@ import { useUserInfo } from '@/service/hooks/useUserInfo'
 import { useUserStore } from '@/store/user.store'
 import { pick } from 'radash'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import Logo from '@/assets/logo.svg?react'
 
 interface ILayoutProps {
   menus: { label: string; href: To }[]
@@ -46,7 +47,8 @@ export function Layout(props: ILayoutProps) {
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <a href="#" className="flex items-center gap-2 text-lg font-semibold md:text-base">
-            <CalendarDays className="h-6 w-6" />
+            <Logo className="h-6 w-6" />
+            <h1>BOOKING</h1>
           </a>
           {menus.map((menu) => (
             <a
@@ -71,8 +73,8 @@ export function Layout(props: ILayoutProps) {
           <SheetContent side="left">
             <nav className="grid gap-6 text-lg font-medium">
               <a href="#" className="flex items-center gap-2 text-lg font-semibold">
-                <CalendarDays className="h-6 w-6" />
-                <span className="sr-only">Acme Inc</span>
+                <Logo className="h-6 w-6" />
+                <h1>BOOKING</h1>
               </a>
               {menus.map((menu) => (
                 <a

@@ -21,6 +21,9 @@ import { login } from '@/service/login'
 import { useToast } from '@/components/ui/use-toast'
 import { useNavigate } from 'react-router-dom'
 import UpdatePassword from '@/components/update-password'
+import Logo from '@/assets/logo.svg?react'
+
+const appName: string = import.meta.env.VITE_APP_SYSTEM_NAME
 
 const formSchema = z.object({
   username: z
@@ -77,10 +80,14 @@ const Login: FC = () => {
 
   return (
     <div className="flex items-center h-full">
+      <div className="fixed left-8 top-8 flex items-center gap-2 text-sm font-bold">
+        <Logo className="w-8 h-8" />
+        <h1>Booking</h1>
+      </div>
       <Card className="mx-auto max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">会议室预订系统</CardTitle>
-          <CardDescription>输入你的账户密码登录到会议室预订系统</CardDescription>
+          <CardTitle className="text-2xl">{appName}</CardTitle>
+          <CardDescription>输入你的账户密码登录</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
