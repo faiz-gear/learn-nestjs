@@ -216,6 +216,7 @@ export class UserController {
     vo.phoneNumber = user.phoneNumber;
     vo.nickName = user.nickName;
     vo.createTime = user.createTime;
+    vo.isAdmin = user.isAdmin;
     vo.isFrozen = user.isFrozen;
     return vo;
   }

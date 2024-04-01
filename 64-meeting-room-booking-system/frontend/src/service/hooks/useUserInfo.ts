@@ -11,6 +11,7 @@ interface IUserInfoVo {
   nickName: string
   phoneNumber: string
   username: string
+  isAdmin: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

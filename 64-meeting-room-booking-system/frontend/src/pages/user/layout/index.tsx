@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Outlet, To, useLocation, useNavigate } from 'react-router-dom'
 import cls from 'classnames'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import UpdatePassword from '@/components/update-password'
 import UpdateInfo from '@/components/update-info'
 import { useUserInfo } from '@/service/hooks/useUserInfo'
@@ -21,6 +21,7 @@ import { useUserStore } from '@/store/user.store'
 import { pick } from 'radash'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Logo from '@/assets/logo.svg?react'
+import { getDynamicRoutes } from '@/router'
 
 interface ILayoutProps {
   menus: { label: string; href: To }[]
@@ -36,8 +37,14 @@ export function Layout(props: ILayoutProps) {
   const location = useLocation()
   const navigate = useNavigate()
   const { userInfo } = useUserInfo()
-  const setUserInfo = useUserStore((state) => state.setUserInfo)
+  const { setUserInfo, setRoutes } = useUserStore((state) => ({
+    setUserInfo: state.setUserInfo,
+    setRoutes: state.setRoutes
+  }))
   if (userInfo) setUserInfo(userInfo)
+  useEffect(() => {
+    setRoutes(getDynamicRoutes(!!userInfo?.isAdmin))
+  }, [userInfo, setRoutes])
 
   const [resetPwdDialogOpen, setResetPwdDialogOpen] = useState(false)
   const [updateInfoDialogOpen, setUpdateInfoDialogOpen] = useState(false)

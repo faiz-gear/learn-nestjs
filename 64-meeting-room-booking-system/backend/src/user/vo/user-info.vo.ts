@@ -23,5 +23,8 @@ export class UserInfoVo {
   isFrozen: boolean;
 
   @ApiProperty()
+  isAdmin: boolean;
+
+  @ApiProperty()
   createTime: Date;
 }

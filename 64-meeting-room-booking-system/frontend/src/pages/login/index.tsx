@@ -101,7 +101,7 @@ const Login: FC<ILoginProps> = (props) => {
       </div>
       <Card className="mx-auto max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">{appName + (isAdmin && '——管理员')}</CardTitle>
+          <CardTitle className="text-2xl">{appName + (isAdmin ? '——管理员' : '')}</CardTitle>
           <CardDescription>输入你的账户密码登录</CardDescription>
         </CardHeader>
         <CardContent>
