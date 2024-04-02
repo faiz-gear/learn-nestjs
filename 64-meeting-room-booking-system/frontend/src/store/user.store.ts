@@ -15,7 +15,7 @@ type TUserActions = {
 
 export const useUserStore = createWithEqualityFn<TUserState & TUserActions>(
   (set) => ({
-    userInfo: null,
+    userInfo: JSON.parse(localStorage.getItem('userInfo') ?? '{}') ?? null,
     routes: [],
     setUserInfo: (userInfo) => set({ userInfo: userInfo }),
     setRoutes: (routes) => set({ routes: routes })

@@ -22,8 +22,9 @@ import { useToast } from '@/components/ui/use-toast'
 import { useNavigate } from 'react-router-dom'
 import UpdatePassword from '@/components/update-password'
 import Logo from '@/assets/logo.svg?react'
+import { useUserInfo } from '@/service/hooks/useUserInfo'
 import { useUserStore } from '@/store/user.store'
-import { getDynamicRoutes } from '@/router'
+import { clearLocalStorage } from '@/utils/clear'
 
 const appName: string = import.meta.env.VITE_APP_SYSTEM_NAME
 
@@ -51,7 +52,10 @@ const Login: FC<ILoginProps> = (props) => {
 
   const { toast } = useToast()
   const navigate = useNavigate()
-  const setRoutes = useUserStore((state) => state.setRoutes)
+  const { mutate } = useUserInfo({
+    revalidateOnMount: false
+  })
+  const setUserInfo = useUserStore((state) => state.setUserInfo)
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -72,22 +76,28 @@ const Login: FC<ILoginProps> = (props) => {
     const res = await loginFunc(values.username, values.password)
 
     if (res.code === 200 || res.code === 201) {
-      toast({
-        title: '登录成功'
-      })
       localStorage.setItem('accessToken', res.data.accessToken)
       localStorage.setItem('refreshToken', res.data.refreshToken)
 
-      // 更新路由
-      setRoutes(getDynamicRoutes(res.data.userInfo.isAdmin))
+      const userInfo = await mutate()
+      if (userInfo) {
+        setUserInfo(userInfo)
+        localStorage.setItem('userInfo', JSON.stringify(userInfo))
+      }
 
-      navigate('/')
+      if (userInfo) {
+        toast({
+          title: '登录成功'
+        })
+        navigate('/')
+      }
     } else {
       toast({
         title: '登录失败',
         description: res.data,
         variant: 'destructive'
       })
+      clearLocalStorage()
     }
   }
 

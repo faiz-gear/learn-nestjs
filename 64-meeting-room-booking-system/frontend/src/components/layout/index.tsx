@@ -13,15 +13,14 @@ import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Outlet, To, useLocation, useNavigate } from 'react-router-dom'
 import cls from 'classnames'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useState } from 'react'
 import UpdatePassword from '@/components/update-password'
 import UpdateInfo from '@/components/update-info'
-import { useUserInfo } from '@/service/hooks/useUserInfo'
 import { useUserStore } from '@/store/user.store'
 import { pick } from 'radash'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Logo from '@/assets/logo.svg?react'
-import { getDynamicRoutes } from '@/router'
+import { clearLocalStorage } from '@/utils/clear'
 
 interface ILayoutProps {
   menus: { label: string; href: To }[]
@@ -36,15 +35,8 @@ export function Layout(props: ILayoutProps) {
   const { menus } = props
   const location = useLocation()
   const navigate = useNavigate()
-  const { userInfo } = useUserInfo()
-  const { setUserInfo, setRoutes } = useUserStore((state) => ({
-    setUserInfo: state.setUserInfo,
-    setRoutes: state.setRoutes
-  }))
-  if (userInfo) setUserInfo(userInfo)
-  useEffect(() => {
-    setRoutes(getDynamicRoutes(!!userInfo?.isAdmin))
-  }, [userInfo, setRoutes])
+  const userInfo = useUserStore((state) => state.userInfo)
+  if (!userInfo) navigate('/login')
 
   const [resetPwdDialogOpen, setResetPwdDialogOpen] = useState(false)
   const [updateInfoDialogOpen, setUpdateInfoDialogOpen] = useState(false)
@@ -131,13 +123,20 @@ export function Layout(props: ILayoutProps) {
               <DropdownMenuItem>支持</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => setUpdateInfoDialogOpen(true)}>个人信息</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => navigate('/login')}>退出登录</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  clearLocalStorage()
+                  navigate('/login')
+                }}
+              >
+                退出登录
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setResetPwdDialogOpen(true)}>修改密码</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </header>
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+      <main className="flex flex-1 flex-col gap-4 p-2 md:gap-8 md:p-4">
         <Suspense fallback={'loading...'}>
           <Outlet />
           <UpdatePassword open={resetPwdDialogOpen} onOpenChange={setResetPwdDialogOpen} />
