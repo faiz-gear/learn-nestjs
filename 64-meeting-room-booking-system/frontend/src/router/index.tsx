@@ -11,6 +11,7 @@ import ManagementLayout from '@/pages/admin/c-pages/management'
 import { useUserStore } from '@/store/user.store'
 
 const MeetingRoomList = lazy(() => import('@/pages/user/c-pages/meeting-room-list'))
+const User = lazy(() => import('@/pages/admin/c-pages/management/c-pages/user'))
 
 const userMenu = [
   {
@@ -46,7 +47,7 @@ const adminMenus = [
     href: '/management'
   }
 ]
-export const adminRoutes: RouteObject[] = [
+const adminRoutes: RouteObject[] = [
   {
     index: true,
     element: <AdminDashboard />
@@ -75,7 +76,7 @@ export const adminRoutes: RouteObject[] = [
       },
       {
         path: 'user',
-        element: <div>用户管理</div>
+        element: <User />
       },
       {
         path: 'reservation',

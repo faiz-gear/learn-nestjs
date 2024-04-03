@@ -16,11 +16,12 @@ interface PendingTask {
 let refreshing = false
 const queue: PendingTask[] = []
 
-request.interceptors.request.use((res) => {
+request.interceptors.request.use((config) => {
+  console.log('🚀 ~ file: request.ts ~ line 20 ~ request.interceptors.request.use ~ config', config)
   if (localStorage.getItem('accessToken')) {
-    res.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
+    config.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
   }
-  return res
+  return config
 })
 
 request.interceptors.response.use(

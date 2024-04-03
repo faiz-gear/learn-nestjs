@@ -19,11 +19,11 @@ const Management: FC<PropsWithChildren<IManagementProps>> = (props) => {
     <div className="flex-1 grid w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full flex-col gap-2">
-          <div className="flex-1">
+          <div className="flex-1 pt-2">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               {menus.map((menu) => (
                 <a
-                  className="flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                  className="flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground cursor-pointer"
                   key={menu.label}
                   onClick={() => navigate(menu.href)}
                 >
@@ -68,7 +68,7 @@ const Management: FC<PropsWithChildren<IManagementProps>> = (props) => {
           <div className="flex items-center">
             <h1 className="text-lg font-semibold md:text-2xl">{currentLabel || ''}</h1>
           </div>
-          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
+          <div className="rounded-lg border border-dashed shadow-sm">
             <Outlet />
           </div>
         </main>
@@ -76,5 +76,7 @@ const Management: FC<PropsWithChildren<IManagementProps>> = (props) => {
     </div>
   )
 }
+
+Management.displayName = 'Management'
 
 export default memo(Management)

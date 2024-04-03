@@ -4,3 +4,8 @@ export interface IResponse<T = any> {
   message: string
   data: T
 }
+
+export interface IPaginationParams {
+  pageNo: number
+  pageSize: number
+}

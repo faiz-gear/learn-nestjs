@@ -1,11 +1,11 @@
-export type TUpdatePassword = {
+export interface IUpdatePassword {
   username: string
   password: string
   email: string
   captcha: string
 }
 
-export type TUpdateInfo = {
+export interface IUpdateInfo {
   headPic?: string
   nickName?: string
   email: string

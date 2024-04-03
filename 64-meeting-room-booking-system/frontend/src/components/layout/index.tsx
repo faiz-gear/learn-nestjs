@@ -36,7 +36,7 @@ export function Layout(props: ILayoutProps) {
   const location = useLocation()
   const navigate = useNavigate()
   const userInfo = useUserStore((state) => state.userInfo)
-  if (!userInfo) navigate('/login')
+  if (!userInfo || !userInfo.id) navigate('/login')
 
   const [resetPwdDialogOpen, setResetPwdDialogOpen] = useState(false)
   const [updateInfoDialogOpen, setUpdateInfoDialogOpen] = useState(false)

@@ -1,7 +1,7 @@
 import { get, post } from '../request'
-import { TUpdateInfo, TUpdatePassword } from './type'
+import { IUpdateInfo, IUpdatePassword } from './type'
 
-export const updatePassword = async (data: TUpdatePassword) => {
+export const updatePassword = async (data: IUpdatePassword) => {
   return await post('/user/update-password', data)
 }
 
@@ -11,11 +11,7 @@ export const getUpdatePasswordCaptcha = async (email: string) => {
   })
 }
 
-export const getInfo = async () => {
-  return await get('/user/info')
-}
-
-export const updateInfo = async (data: TUpdateInfo) => {
+export const updateInfo = async (data: IUpdateInfo) => {
   return await post('/user/update-user', data)
 }
 
