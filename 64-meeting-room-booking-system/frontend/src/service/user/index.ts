@@ -24,3 +24,7 @@ export const uploadAvatar = async (file: File) => {
   formData.append('file', file)
   return await post<string>('/user/upload', formData)
 }
+
+export const freezeUser = async (id: number) => {
+  return await get('/user/freeze-user', { params: { id } })
+}

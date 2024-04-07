@@ -22,7 +22,7 @@ export interface IUserItemVo {
 }
 
 export interface IUserListVo {
-  total: number
+  totalCount: number
   users: IUserItemVo[]
 }
 

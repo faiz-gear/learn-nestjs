@@ -1,34 +1,56 @@
-import { ColumnDef, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  // getPaginationRowModel,
+  useReactTable,
+  type TableOptions,
+  type PaginationState
+} from '@tanstack/react-table'
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Pagination, PaginationContent, PaginationItem } from '@/components/ui/pagination'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 import { useState } from 'react'
+import {} from '@tanstack/react-table'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  rowCount: number
+  defaultPagination?: PaginationState
+  onPaginationChange: TableOptions<TData>['onPaginationChange']
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
-  const [pagination, setPagination] = useState({
-    pageIndex: 0, //initial page index
-    pageSize: 10 //default page size
-  })
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  rowCount,
+  defaultPagination,
+  onPaginationChange
+}: DataTableProps<TData, TValue>) {
+  const [pagination, setPagination] = useState<PaginationState>(
+    defaultPagination ?? {
+      pageIndex: 0, //initial page index
+      pageSize: 2 //default page size
+    }
+  )
 
   const table = useReactTable({
     data,
     columns,
+    rowCount,
+    manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageIndex: 0, //custom initial page index
-        pageSize: 10 //custom default page size
-      }
+    // getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination
     },
-    onPaginationChange: setPagination
+    onPaginationChange: (pagination) => {
+      setPagination(pagination)
+      onPaginationChange?.(pagination)
+    }
   })
 
   return (
@@ -69,7 +91,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       </div>
       <div className="flex items-center space-x-2 py-4">
         <div className="text-xs text-muted-foreground">
-          正在显示 <strong> {pagination.pageIndex * 10 + 1}-10 </strong> 条 共<strong> {data.length} </strong> 条
+          正在显示
+          <strong>
+            {pagination.pageIndex * pagination.pageSize + 1}-{pagination.pageSize * pagination.pageIndex + data.length}
+          </strong>
+          条 共<strong> {rowCount} </strong> 条
         </div>
         <div className="!ml-auto">
           <Pagination>

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { IPaginationParams } from '@/service/type'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
+import { PaginationState } from '@tanstack/react-table'
 
 type SearchParams = Omit<IUserPaginationParams, keyof IPaginationParams>
 
@@ -16,9 +17,13 @@ function User() {
     nickName: '',
     email: ''
   })
-  const { userList } = useUserList({
-    pageNo: 1,
-    pageSize: 10,
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0, //initial page index
+    pageSize: 2 //default page size
+  })
+  const { userList, mutate } = useUserList({
+    pageNo: pagination.pageIndex + 1,
+    pageSize: pagination.pageSize,
     ...params
   })
 
@@ -79,7 +84,12 @@ function User() {
           </div>
         </form>
       </Form>
-      <DataTable columns={columns} data={userList?.users || []} />
+      <DataTable
+        columns={columns(mutate)}
+        data={userList?.users || []}
+        rowCount={userList?.totalCount || 0}
+        onPaginationChange={setPagination}
+      />
     </div>
   )
 }
