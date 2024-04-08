@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { useToast } from '@/components/ui/use-toast'
 import { useNavigate } from 'react-router-dom'
-import { getUpdatePasswordCaptcha, updatePassword } from '@/service/user'
+import { getUpdatePasswordCaptcha, updatePassword, updateAdminPassword } from '@/service/user'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import Captcha from '../captcha'
+import { useShallow, useUserStore } from '@/store'
 
 interface IUpdatePasswordProps extends DialogPrimitive.DialogProps {
   onSuccess?: () => void
@@ -63,6 +64,7 @@ const UpdatePassword: FC<PropsWithChildren<IUpdatePasswordProps>> = (props) => {
       captcha: ''
     }
   })
+  const isAdmin = useUserStore(useShallow((state) => state.userInfo?.isAdmin))
 
   const beforeSend = useCallback(async () => {
     const isValid = await form.trigger()
@@ -71,10 +73,11 @@ const UpdatePassword: FC<PropsWithChildren<IUpdatePasswordProps>> = (props) => {
   }, [form])
   const getCaptcha = useCallback(async (email: string | undefined) => await getUpdatePasswordCaptcha(email!), [])
 
+  const updatePasswordFunc = isAdmin ? updateAdminPassword : updatePassword
   const onSubmit = useCallback(
     async (values: z.infer<typeof formSchema>) => {
       console.log(values)
-      const res = await updatePassword({
+      const res = await updatePasswordFunc({
         username: values.username,
         password: values.password,
         email: values.email,
@@ -85,7 +88,7 @@ const UpdatePassword: FC<PropsWithChildren<IUpdatePasswordProps>> = (props) => {
           title: '修改密码成功'
         })
         setTimeout(() => {
-          onSuccess?.() || navigate('/login')
+          onSuccess?.() || navigate(isAdmin ? '/admin/login' : '/login')
         }, 2000)
       } else {
         toast({
@@ -95,7 +98,7 @@ const UpdatePassword: FC<PropsWithChildren<IUpdatePasswordProps>> = (props) => {
         })
       }
     },
-    [toast, navigate, onSuccess]
+    [toast, navigate, onSuccess, updatePasswordFunc, isAdmin]
   )
 
   return (

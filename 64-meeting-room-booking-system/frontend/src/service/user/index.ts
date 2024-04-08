@@ -1,6 +1,7 @@
 import { get, post } from '../request'
 import { IUpdateInfo, IUpdatePassword } from './type'
 
+/* ------------------------------- 普通 用户接口 ------------------------------- */
 export const updatePassword = async (data: IUpdatePassword) => {
   return await post('/user/update-password', data)
 }
@@ -25,6 +26,11 @@ export const uploadAvatar = async (file: File) => {
   return await post<string>('/user/upload', formData)
 }
 
+/* ------------------------------- admin 用户接口 ------------------------------- */
 export const freezeUser = async (id: number) => {
   return await get('/user/freeze-user', { params: { id } })
 }
+export const updateAdminPassword = async (data: IUpdatePassword) => {
+  return await post('/user/admin/update-password', data)
+}
+/* ------------------------------- admin 用户接口 ------------------------------- */
