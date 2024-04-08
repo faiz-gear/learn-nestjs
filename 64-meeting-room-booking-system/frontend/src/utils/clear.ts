@@ -1,5 +1,4 @@
-export const clearLocalStorage = () => {
+export const clearToken = () => {
   localStorage.removeItem('accessToken')
   localStorage.removeItem('refreshToken')
-  localStorage.removeItem('userInfo')
 }

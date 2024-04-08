@@ -8,7 +8,7 @@ import Dashboard from '@/pages/user/c-pages/dashboard'
 import AdminDashboard from '@/pages/admin/c-pages/dashboard'
 import { lazy } from 'react'
 import ManagementLayout from '@/pages/admin/c-pages/management'
-import { useUserStore } from '@/store/user.store'
+import { useUserStore, useShallow } from '@/store'
 
 const MeetingRoomList = lazy(() => import('@/pages/user/c-pages/meeting-room-list'))
 const User = lazy(() => import('@/pages/admin/c-pages/management/c-pages/user'))
@@ -103,7 +103,7 @@ const recursiveRenderRoutes = (routes: RouteObject[], parentPath = '') => {
 }
 
 const AppRouter = () => {
-  const userInfo = useUserStore((state) => state.userInfo)
+  const userInfo = useUserStore(useShallow((state) => state.userInfo))
   const isAdmin = userInfo?.isAdmin || false
   const mainRoutes = userInfo ? (isAdmin ? adminRoutes : userRoutes) : []
   const mainMenus = isAdmin ? adminMenus : userMenu

@@ -13,14 +13,14 @@ import { Input } from '@/components/ui/input'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { Outlet, To, useLocation, useNavigate } from 'react-router-dom'
 import cls from 'classnames'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import UpdatePassword from '@/components/update-password'
 import UpdateInfo from '@/components/update-info'
-import { useUserStore } from '@/store/user.store'
+import { useUserStore, useShallow } from '@/store'
 import { pick } from 'radash'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Logo from '@/assets/logo.svg?react'
-import { clearLocalStorage } from '@/utils/clear'
+import { clearToken } from '@/utils/clear'
 
 interface ILayoutProps {
   menus: { label: string; href: To }[]
@@ -35,8 +35,12 @@ export function Layout(props: ILayoutProps) {
   const { menus } = props
   const location = useLocation()
   const navigate = useNavigate()
-  const userInfo = useUserStore((state) => state.userInfo)
-  if (!userInfo || !userInfo.id) navigate('/login')
+  const userInfo = useUserStore(useShallow((state) => state.userInfo))
+  const reset = useUserStore(useShallow((state) => state.reset) )
+ 
+  useEffect(() => {
+    if (!userInfo || !userInfo.id) navigate('/login')
+  }, [userInfo, navigate])
 
   const [resetPwdDialogOpen, setResetPwdDialogOpen] = useState(false)
   const [updateInfoDialogOpen, setUpdateInfoDialogOpen] = useState(false)
@@ -125,7 +129,8 @@ export function Layout(props: ILayoutProps) {
               <DropdownMenuItem onClick={() => setUpdateInfoDialogOpen(true)}>个人信息</DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  clearLocalStorage()
+                  clearToken()
+                  reset()
                   navigate('/login')
                 }}
               >

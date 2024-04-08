@@ -23,8 +23,8 @@ import { useNavigate } from 'react-router-dom'
 import UpdatePassword from '@/components/update-password'
 import Logo from '@/assets/logo.svg?react'
 import { useUserInfo } from '@/service/hooks/useUserInfo'
-import { useUserStore } from '@/store/user.store'
-import { clearLocalStorage } from '@/utils/clear'
+import { useUserStore, useShallow } from '@/store'
+import { clearToken } from '@/utils/clear'
 
 const appName: string = import.meta.env.VITE_APP_SYSTEM_NAME
 
@@ -55,7 +55,7 @@ const Login: FC<ILoginProps> = (props) => {
   const { mutate } = useUserInfo({
     revalidateOnMount: false
   })
-  const setUserInfo = useUserStore((state) => state.setUserInfo)
+  const setUserInfo = useUserStore(useShallow((state) => state.setUserInfo))
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -82,7 +82,6 @@ const Login: FC<ILoginProps> = (props) => {
       const userInfo = await mutate()
       if (userInfo) {
         setUserInfo(userInfo)
-        localStorage.setItem('userInfo', JSON.stringify(userInfo))
       }
 
       if (userInfo) {
@@ -97,7 +96,7 @@ const Login: FC<ILoginProps> = (props) => {
         description: res.data,
         variant: 'destructive'
       })
-      clearLocalStorage()
+      clearToken()
     }
   }
 
