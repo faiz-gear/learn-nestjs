@@ -2,6 +2,7 @@
 import { toast } from '@/components/ui/use-toast'
 import axios, { AxiosRequestConfig } from 'axios'
 import { IResponse } from './type'
+import { useUserStore } from '@/store'
 
 const request = axios.create({
   baseURL: 'http://localhost:3000',
@@ -17,7 +18,6 @@ let refreshing = false
 const queue: PendingTask[] = []
 
 request.interceptors.request.use((config) => {
-  console.log('🚀 ~ file: request.ts ~ line 20 ~ request.interceptors.request.use ~ config', config)
   if (localStorage.getItem('accessToken')) {
     config.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
   }
@@ -72,7 +72,8 @@ request.interceptors.response.use(
       // 如果刷新token失败, 则跳转到登录页
       if (config.url?.includes('/user/refresh')) {
         setTimeout(() => {
-          window.location.href = '/login'
+          const isAdmin = useUserStore.getState().userInfo?.isAdmin
+          window.location.href = isAdmin ? '/admin/login' : '/login'
         }, 1500)
       }
 
@@ -96,14 +97,15 @@ const del = <T = any>(url: string, config?: AxiosRequestConfig) => request.delet
 const put = <T = any>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
   request.put<any, IResponse<T>>(url, data, config)
 
-async function refreshToken() {
-  const res = await request.get('/user/refresh-token', {
+export async function refreshToken() {
+  const isAdmin = useUserStore.getState().userInfo?.isAdmin
+  const res = await request.get(isAdmin ? '/user/admin/refresh-token' : '/user/refresh-token', {
     params: {
-      refresh_token: localStorage.getItem('refresh_token')
+      refreshToken: localStorage.getItem('refreshToken')
     }
   })
-  localStorage.setItem('accessToken', res.data.access_token || '')
-  localStorage.setItem('refreshToken', res.data.refresh_token || '')
+  localStorage.setItem('accessToken', res.data.accessToken || '')
+  localStorage.setItem('refreshToken', res.data.refreshToken || '')
   return res
 }
 

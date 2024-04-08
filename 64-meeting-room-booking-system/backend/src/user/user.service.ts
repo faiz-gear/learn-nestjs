@@ -220,6 +220,7 @@ export class UserService {
           username: user.userInfo.username,
           roles: user.userInfo.roles,
           permissions: user.userInfo.permissions,
+          email: user.userInfo.email,
         },
 
         {
@@ -284,8 +285,12 @@ export class UserService {
     }
   }
 
-  async updateUser(userId: number, updateUserDto: UpdateUserDto) {
-    const { email, nickName, headPic, captcha } = updateUserDto;
+  async updateUser(
+    userId: number,
+    updateUserDto: UpdateUserDto,
+    email: string,
+  ) {
+    const { nickName, headPic, captcha, email: newEmail } = updateUserDto;
     const foundCaptcha = await this.redisService.get(
       `update_user_captcha_${email}`,
     );
@@ -308,9 +313,13 @@ export class UserService {
     if (headPic) {
       user.headPic = updateUserDto.headPic;
     }
+    if (newEmail !== email) {
+      user.email = updateUserDto.email;
+    }
 
     try {
       await this.userRepository.save(user);
+      await this.redisService.del(`update_user_captcha_${email}`);
       return '用户信息修改成功';
     } catch (e) {
       this.logger.error(e, UserService);

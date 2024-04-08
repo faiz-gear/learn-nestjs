@@ -315,9 +315,14 @@ export class UserController {
   @RequireLogin()
   async updateUser(
     @UserInfo('userId') userId: number,
+    @UserInfo('email') userInfoEmail: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.userService.updateUser(userId, updateUserDto);
+    return await this.userService.updateUser(
+      userId,
+      updateUserDto,
+      userInfoEmail,
+    );
   }
 
   @ApiBearerAuth()

@@ -35,9 +35,13 @@ export function Layout(props: ILayoutProps) {
   const { menus } = props
   const location = useLocation()
   const navigate = useNavigate()
-  const userInfo = useUserStore(useShallow((state) => state.userInfo))
-  const reset = useUserStore(useShallow((state) => state.reset) )
- 
+  const { userInfo, reset } = useUserStore(
+    useShallow((state) => ({
+      userInfo: state.userInfo,
+      reset: state.reset
+    }))
+  )
+
   useEffect(() => {
     if (!userInfo || !userInfo.id) navigate('/login')
   }, [userInfo, navigate])
@@ -131,7 +135,7 @@ export function Layout(props: ILayoutProps) {
                 onClick={() => {
                   clearToken()
                   reset()
-                  navigate('/login')
+                  navigate(userInfo?.isAdmin ? '/admin/login' : '/login')
                 }}
               >
                 退出登录

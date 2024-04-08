@@ -9,10 +9,13 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import { getUpdateInfoCaptcha, updateInfo, uploadAvatar } from '@/service/user'
+import { getUpdateInfoCaptcha, updateInfo, uploadAvatar, updateAdminInfo } from '@/service/user'
 import Captcha from '../captcha'
 import { useToast } from '../ui/use-toast'
 import { omit } from 'radash'
+import { useShallow, useUserStore } from '@/store'
+import { useUserInfo } from '@/service/hooks/useUserInfo'
+import { refreshToken } from '@/service/request'
 
 export interface IUpdatePasswordProps extends DialogPrimitive.DialogProps {
   defaultValues?: {
@@ -49,6 +52,15 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
       email: defaultValues?.email ?? ''
     }
   })
+  const { isAdmin, setUserInfo } = useUserStore(
+    useShallow((state) => ({
+      isAdmin: state.userInfo?.isAdmin,
+      setUserInfo: state.setUserInfo
+    }))
+  )
+  const { mutate } = useUserInfo({
+    revalidateOnMount: false
+  })
 
   const uploadAvatarRef = useRef<HTMLInputElement>(null)
   const [currentSelectedFile, setCurrentSelectedFile] = useState<File | null>(null)
@@ -75,6 +87,7 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
   }, [form])
   const getCaptcha = useCallback(async () => await getUpdateInfoCaptcha(), [])
 
+  const updateUserInfoFunc = isAdmin ? updateAdminInfo : updateInfo
   const onSubmit = useCallback(
     async (values: z.infer<typeof formSchema>) => {
       let headPic: string | undefined
@@ -84,12 +97,16 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
       } else {
         headPic = values.headPic
       }
-      const res = await updateInfo({ ...values, headPic })
+      const res = await updateUserInfoFunc({ ...values, headPic })
 
       if (res.code === 200 || res.code === 201) {
         toast({
           title: '更新个人信息成功'
         })
+        // 需要重新刷新token,更新token里面的用户信息
+        await refreshToken()
+        const userInfo = await mutate()
+        userInfo && setUserInfo(userInfo)
       } else {
         toast({
           title: '更新个人信息失败',
@@ -98,7 +115,7 @@ const UpdateInfo: FC<IUpdatePasswordProps> = (props) => {
         })
       }
     },
-    [toast, currentSelectedFile]
+    [toast, currentSelectedFile, updateUserInfoFunc, mutate, setUserInfo]
   )
 
   return (
