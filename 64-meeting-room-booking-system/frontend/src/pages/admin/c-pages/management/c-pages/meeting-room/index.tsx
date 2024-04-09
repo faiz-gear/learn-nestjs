@@ -1,27 +1,28 @@
 import { memo, useState } from 'react'
 import { columns } from './columns'
-import { DataTable } from '@/components/data-table'
-import { IUserPaginationParams, useUserList } from '@/service/hooks/useUserList'
+import { DataTable } from '../../../../../../components/data-table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { IPaginationParams } from '@/service/type'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import { PaginationState } from '@tanstack/react-table'
+import { IMeetingRoomPaginationParams, useMeetingRoomList } from '@/service/hooks/useMeetingRoomList'
+import DialogAdding from './dialog-adding'
 
-type SearchParams = Omit<IUserPaginationParams, keyof IPaginationParams>
+type SearchParams = Omit<IMeetingRoomPaginationParams, keyof IPaginationParams>
 
-function User() {
+function MeetingRoom() {
   const [params, setParams] = useState<SearchParams>({
-    username: '',
-    nickName: '',
-    email: ''
+    name: '',
+    capacity: '',
+    equipment: ''
   })
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0, //initial page index
     pageSize: 2 //default page size
   })
-  const { userList, mutate } = useUserList({
+  const { meetingRoomList, mutate } = useMeetingRoomList({
     pageNo: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     ...params
@@ -43,11 +44,11 @@ function User() {
           <div className="flex gap-4 py-4">
             <FormField
               control={form.control}
-              name="username"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input type="text" placeholder="请输入用户名" className="w-auto" {...field} />
+                    <Input type="text" placeholder="请输入会议室名" className="w-auto" {...field} />
                   </FormControl>
                   {/* <FormDescription>This is your public display name.</FormDescription> */}
                 </FormItem>
@@ -55,11 +56,11 @@ function User() {
             />
             <FormField
               control={form.control}
-              name="nickName"
+              name="capacity"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input type="text" placeholder="请输入昵称" className="w-auto" {...field} />
+                    <Input type="text" placeholder="请输入容量" className="w-auto" {...field} />
                   </FormControl>
                   {/* <FormDescription>This is your public display name.</FormDescription> */}
                 </FormItem>
@@ -67,11 +68,11 @@ function User() {
             />
             <FormField
               control={form.control}
-              name="email"
+              name="equipment"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input type="email" placeholder="请输入邮箱" className="w-auto" {...field} />
+                    <Input type="email" placeholder="请输入设备" className="w-auto" {...field} />
                   </FormControl>
                   {/* <FormDescription>This is your public display name.</FormDescription> */}
                 </FormItem>
@@ -81,17 +82,19 @@ function User() {
             <Button type="submit" variant="outline">
               搜索
             </Button>
+
+            <DialogAdding onSuccess={mutate} />
           </div>
         </form>
       </Form>
       <DataTable
         columns={columns(mutate)}
-        data={userList?.users || []}
-        rowCount={userList?.totalCount || 0}
+        data={meetingRoomList?.meetingRooms || []}
+        rowCount={meetingRoomList?.totalCount || 0}
         onPaginationChange={setPagination}
       />
     </div>
   )
 }
 
-export default memo(User)
+export default memo(MeetingRoom)

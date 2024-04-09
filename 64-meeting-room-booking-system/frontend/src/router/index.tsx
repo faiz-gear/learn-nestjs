@@ -9,6 +9,7 @@ import AdminDashboard from '@/pages/admin/c-pages/dashboard'
 import { lazy } from 'react'
 import ManagementLayout from '@/pages/admin/c-pages/management'
 import { useUserStore, useShallow } from '@/store'
+import MeetingRoom from '@/pages/admin/c-pages/management/c-pages/meeting-room'
 
 const MeetingRoomList = lazy(() => import('@/pages/user/c-pages/meeting-room-list'))
 const User = lazy(() => import('@/pages/admin/c-pages/management/c-pages/user'))
@@ -72,7 +73,7 @@ const adminRoutes: RouteObject[] = [
     children: [
       {
         path: 'meeting-room',
-        element: <div>会议室管理</div>
+        element: <MeetingRoom />
       },
       {
         path: 'user',
