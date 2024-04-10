@@ -5,3 +5,7 @@ export interface ICreateMeetingRoom {
   equipment?: string
   description?: string
 }
+
+export interface IUpdateMeetingRoom extends ICreateMeetingRoom {
+  id: number
+}

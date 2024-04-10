@@ -5,6 +5,8 @@ import { IMeetingRoomItemVo, IMeetingRoomListVo } from '@/service/hooks/useMeeti
 import { deleteMeetingRoom } from '@/service/meeting-room'
 import { ColumnDef } from '@tanstack/react-table'
 import { KeyedMutator } from 'swr'
+import DialogEditing from './dialog-editing'
+import { pick } from 'radash'
 
 export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IMeetingRoomItemVo>[] = (mutate) => [
   {
@@ -33,6 +35,10 @@ export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IM
     cell: (data) => <Switch checked={data.row.original.isBooked} disabled />
   },
   {
+    accessorKey: 'description',
+    header: '描述'
+  },
+  {
     accessorKey: 'createTime',
     header: '创建时间',
     cell: (data) => new Date(data.row.original.createTime).toLocaleString()
@@ -43,9 +49,13 @@ export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IM
     header: '操作',
     cell: (data) => (
       <>
-        <Button variant={'link'} size={'sm'}>
-          编辑
-        </Button>
+        <DialogEditing
+          defaultValues={{
+            ...pick(data.row.original, ['id', 'name', 'equipment', 'location', 'description']),
+            capacity: data.row.original.capacity + ''
+          }}
+          onSuccess={() => mutate()}
+        />
         <ConfirmAlert
           title={`确认删除会议室"${data.row.original.name}"吗?`}
           onConfirm={async () => {
