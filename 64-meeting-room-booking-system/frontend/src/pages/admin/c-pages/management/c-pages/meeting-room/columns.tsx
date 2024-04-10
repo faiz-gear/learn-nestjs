@@ -44,7 +44,7 @@ export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IM
         <Button variant={'link'} size={'sm'}>
           编辑
         </Button>
-        <Button variant={'link'} size={'sm'} className="text-red-600 ">
+        <Button variant={'link'} size={'sm'} className="text-red-600">
           删除
         </Button>
       </>
