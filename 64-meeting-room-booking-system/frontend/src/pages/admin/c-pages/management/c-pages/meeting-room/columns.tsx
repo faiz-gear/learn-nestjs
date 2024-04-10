@@ -1,10 +1,12 @@
+import ConfirmAlert from '@/components/confirm-alert'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { IMeetingRoomItemVo, IMeetingRoomListVo } from '@/service/hooks/useMeetingRoomList'
+import { deleteMeetingRoom } from '@/service/meeting-room'
 import { ColumnDef } from '@tanstack/react-table'
 import { KeyedMutator } from 'swr'
 
-export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IMeetingRoomItemVo>[] = () => [
+export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IMeetingRoomItemVo>[] = (mutate) => [
   {
     accessorKey: 'id',
     header: 'ID'
@@ -39,14 +41,22 @@ export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IM
   {
     accessorKey: 'action',
     header: '操作',
-    cell: () => (
+    cell: (data) => (
       <>
         <Button variant={'link'} size={'sm'}>
           编辑
         </Button>
-        <Button variant={'link'} size={'sm'} className="text-red-600">
-          删除
-        </Button>
+        <ConfirmAlert
+          title={`确认删除会议室"${data.row.original.name}"吗?`}
+          onConfirm={async () => {
+            await deleteMeetingRoom(data.row.original.id)
+            mutate()
+          }}
+        >
+          <Button variant={'link'} size={'sm'} className="text-red-600">
+            删除
+          </Button>
+        </ConfirmAlert>
       </>
     )
   }

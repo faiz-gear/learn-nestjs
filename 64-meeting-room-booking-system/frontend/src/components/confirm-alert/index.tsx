@@ -16,7 +16,7 @@ interface IConfirmAlertProps {
   title: string
   description?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onConfirm: () => Promise<any>
+  onConfirm?: () => Promise<any>
 }
 
 const ConfirmAlert: FC<PropsWithChildren<IConfirmAlertProps>> = (props) => {
@@ -35,7 +35,7 @@ const ConfirmAlert: FC<PropsWithChildren<IConfirmAlertProps>> = (props) => {
           <AlertDialogCancel ref={cancelRef}>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={async () => {
-              await onConfirm()
+              await onConfirm?.()
               cancelRef.current?.click()
             }}
           >
