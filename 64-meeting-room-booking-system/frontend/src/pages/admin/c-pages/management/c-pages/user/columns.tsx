@@ -76,7 +76,7 @@ export const columns: (mutate: KeyedMutator<IUserListVo>) => ColumnDef<IUserItem
       return (
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" size="sm">
+            <Button variant="link" size="sm" className="text-red-600">
               冻结
             </Button>
           </AlertDialogTrigger>
