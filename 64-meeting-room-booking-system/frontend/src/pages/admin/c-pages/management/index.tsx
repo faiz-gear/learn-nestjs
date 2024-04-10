@@ -23,7 +23,10 @@ const Management: FC<PropsWithChildren<IManagementProps>> = (props) => {
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               {menus.map((menu) => (
                 <a
-                  className="flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className={cls([
+                    'flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground cursor-pointer',
+                    currentLabel === menu.label ? '!text-foreground' : ''
+                  ])}
                   key={menu.label}
                   onClick={() => navigate(menu.href)}
                 >

@@ -57,7 +57,11 @@ export const columns: (mutate: KeyedMutator<IUserListVo>) => ColumnDef<IUserItem
     cell: (data) => (
       <Badge
         variant={data.row.original.isFrozen ? 'destructive' : 'default'}
-        className={cls([data.row.original.isFrozen ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'])}
+        className={cls([
+          data.row.original.isFrozen
+            ? 'bg-red-200 text-red-800 hover:bg-red-100 hover:text-red-700'
+            : 'bg-green-200 text-green-800 hover:bg-green-100 hover:text-green-700'
+        ])}
       >
         {data.row.original.isFrozen ? '已冻结' : '正常'}
       </Badge>
@@ -72,11 +76,13 @@ export const columns: (mutate: KeyedMutator<IUserListVo>) => ColumnDef<IUserItem
       return (
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive">冻结</Button>
+            <Button variant="destructive" size="sm">
+              冻结
+            </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>确认冻结用户{`-"${data.row.original.username}"`}吗</AlertDialogTitle>
+              <AlertDialogTitle>确认冻结用户{`"${data.row.original.username}"`}吗</AlertDialogTitle>
               <AlertDialogDescription>这个操作将会冻结用户，用户将无法登录系统，确定要继续吗？</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
