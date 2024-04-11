@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { MeetingRoom } from 'src/meeting-room/entities/meeting-room.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -9,10 +9,14 @@ import {
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
+  Raw,
   Repository,
 } from 'typeorm';
 import { Booking } from './entities/booking.entity';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { BookingStatus } from './enum/booking-status.enum';
+import { RedisService } from 'src/redis/redis.service';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class BookingService {
@@ -21,6 +25,12 @@ export class BookingService {
 
   @InjectRepository(Booking)
   private bookingRepository: Repository<Booking>;
+
+  @Inject(RedisService)
+  private redisService: RedisService;
+
+  @Inject(EmailService)
+  private emailService: EmailService;
 
   async initData() {
     const user1 = await this.entityManager.findOneBy(User, {
@@ -150,8 +160,12 @@ export class BookingService {
       room: {
         id: meetingRoom.id,
       },
-      startTime: LessThanOrEqual(booking.startTime),
-      endTime: MoreThanOrEqual(booking.endTime),
+      startTime: Raw((alias) => `${alias} < :endTime`, {
+        endTime: booking.startTime,
+      }),
+      endTime: Raw((alias) => `${alias} > :startTime`, {
+        startTime: booking.endTime,
+      }),
     });
 
     if (res) {
@@ -159,5 +173,91 @@ export class BookingService {
     }
 
     await this.entityManager.save(Booking, booking);
+  }
+
+  async apply(id: number) {
+    await this.entityManager.update(
+      Booking,
+      {
+        id,
+      },
+      {
+        status: BookingStatus.APPROVED,
+      },
+    );
+    return 'success';
+  }
+
+  async reject(id: number) {
+    await this.entityManager.update(
+      Booking,
+      {
+        id,
+      },
+      {
+        status: BookingStatus.REJECTED,
+      },
+    );
+    return 'success';
+  }
+
+  async unbind(id: number) {
+    await this.entityManager.update(
+      Booking,
+      {
+        id,
+      },
+      {
+        status: BookingStatus.CANCELED,
+      },
+    );
+    return 'success';
+  }
+
+  async urge(id: number) {
+    const flag = await this.redisService.get('urge_' + id);
+
+    if (flag) {
+      return '半小时内只能催办一次，请耐心等待';
+    }
+
+    // 查询当前预订会议室的用户和会议室信息
+    const foundBooking = await this.bookingRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['user', 'room'],
+    });
+
+    let email = await this.redisService.get('admin_email');
+
+    if (!email) {
+      const admin = await this.entityManager.findOne(User, {
+        select: {
+          email: true,
+        },
+        where: {
+          isAdmin: true,
+        },
+      });
+
+      email = admin.email;
+
+      this.redisService.set('admin_email', admin.email);
+    }
+
+    this.emailService.sendMail({
+      to: email,
+      subject: '预定申请催办提醒',
+      html: `用户${foundBooking.user.username} (${
+        foundBooking.user.nickName
+      }) 催办了预定会议室 ${foundBooking.room.name} (预订时间: ${new Date(
+        foundBooking.startTime,
+      ).toLocaleString()}-${new Date(
+        foundBooking.endTime,
+      ).toLocaleString()}) 的审批，请尽快处理。`,
+    });
+
+    this.redisService.set('urge_' + id, 1, 60 * 30);
   }
 }
