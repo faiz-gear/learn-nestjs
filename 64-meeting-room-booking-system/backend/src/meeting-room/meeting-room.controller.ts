@@ -61,6 +61,7 @@ export class MeetingRoomController {
     type: MeetingRoomListVo,
   })
   @Get('list')
+  @RequireLogin()
   list(
     @Query('pageNo', new DefaultValuePipe(1), generateParseIntPipe('pageNo'))
     pageNo: number,
@@ -95,6 +96,7 @@ export class MeetingRoomController {
     status: HttpStatus.OK,
     description: 'success',
   })
+  @RequireLogin()
   @Post('create')
   async create(@Body() meetingRoomDto: CreateMeetingRoomDto) {
     return await this.meetingRoomService.create(meetingRoomDto);
@@ -112,6 +114,7 @@ export class MeetingRoomController {
     status: HttpStatus.OK,
     description: 'success',
   })
+  @RequireLogin()
   @Put('update')
   async update(@Body() meetingRoomDto: UpdateMeetingRoomDto) {
     return await this.meetingRoomService.update(meetingRoomDto);
@@ -128,6 +131,7 @@ export class MeetingRoomController {
     description: 'success',
     type: MeetingRoomVo,
   })
+  @RequireLogin()
   @Get(':id')
   async find(@Param('id') id: number) {
     return await this.meetingRoomService.findById(id);
