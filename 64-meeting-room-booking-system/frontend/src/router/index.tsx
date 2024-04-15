@@ -10,6 +10,7 @@ import { lazy } from 'react'
 import ManagementLayout from '@/pages/admin/c-pages/management'
 import { useUserStore, useShallow } from '@/store'
 import MeetingRoom from '@/pages/admin/c-pages/management/c-pages/meeting-room'
+import Booking from '@/pages/admin/c-pages/management/c-pages/booking'
 
 const MeetingRoomList = lazy(() => import('@/pages/user/c-pages/meeting-room-list'))
 const User = lazy(() => import('@/pages/admin/c-pages/management/c-pages/user'))
@@ -65,7 +66,7 @@ const adminRoutes: RouteObject[] = [
           },
           {
             label: '预约管理',
-            href: '/management/reservation'
+            href: '/management/booking'
           }
         ]}
       />
@@ -80,8 +81,8 @@ const adminRoutes: RouteObject[] = [
         element: <User />
       },
       {
-        path: 'reservation',
-        element: <div>预约管理</div>
+        path: 'booking',
+        element: <Booking />
       }
     ]
   }

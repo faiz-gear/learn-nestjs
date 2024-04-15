@@ -94,7 +94,9 @@ export class BookingService {
     const condition: FindOneOptions<Booking>['where'] = {};
 
     if (username) {
-      condition.user = Like(`%${username}%`);
+      condition.user = {
+        username: Like(`%${username}%`),
+      };
     }
 
     if (meetingRoomName) {
@@ -111,11 +113,14 @@ export class BookingService {
     }
 
     if (bookingTimeStart && bookingTimeEnd) {
-      condition.startTime = Between(bookingTimeStart, bookingTimeEnd);
+      condition.startTime = Between(
+        new Date(bookingTimeStart),
+        new Date(bookingTimeEnd),
+      );
     } else if (bookingTimeStart) {
-      condition.startTime = MoreThanOrEqual(bookingTimeStart);
+      condition.startTime = MoreThanOrEqual(new Date(bookingTimeStart));
     } else if (bookingTimeEnd) {
-      condition.startTime = LessThanOrEqual(bookingTimeEnd);
+      condition.startTime = LessThanOrEqual(new Date(bookingTimeEnd));
     }
 
     const [bookings, totalCount] = await this.bookingRepository.findAndCount({
@@ -127,6 +132,7 @@ export class BookingService {
         user: {
           id: true,
           nickName: true,
+          username: true,
         },
       },
     });

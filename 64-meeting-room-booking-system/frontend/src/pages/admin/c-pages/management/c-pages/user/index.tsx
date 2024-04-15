@@ -34,6 +34,7 @@ function User() {
   const submit = () => {
     const values = form.getValues()
     setParams(values)
+    mutate()
   }
 
   return (
