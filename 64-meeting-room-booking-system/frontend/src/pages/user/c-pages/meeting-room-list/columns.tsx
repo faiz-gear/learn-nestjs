@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { IMeetingRoomItemVo, IMeetingRoomListVo } from '@/service/hooks/useMeetingRoomList'
 import { ColumnDef } from '@tanstack/react-table'
 import { KeyedMutator } from 'swr'
+import DialogBooking from './dialog-booking'
 
 export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IMeetingRoomItemVo>[] = () => [
   {
@@ -45,9 +45,7 @@ export const columns: (mutate: KeyedMutator<IMeetingRoomListVo>) => ColumnDef<IM
     header: '操作',
     cell: (data) => (
       <>
-        <Button variant={'link'} size={'sm'} className="text-green-600" disabled={data.row.original.isBooked}>
-          预订
-        </Button>
+        <DialogBooking meetingRoomId={data.row.original.id} meetingRoomName={data.row.original.name} />
       </>
     )
   }

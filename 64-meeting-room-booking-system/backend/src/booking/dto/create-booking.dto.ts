@@ -10,13 +10,11 @@ export class CreateBookingDto {
   @ApiProperty()
   @ApiProperty()
   @IsNotEmpty({ message: '开始时间不能为空' })
-  @IsNumber()
-  startTime: number;
+  startTime: Date;
 
   @ApiProperty()
   @IsNotEmpty({ message: '结束时间不能为空' })
-  @IsNumber()
-  endTime: number;
+  endTime: Date;
 
   @IsOptional()
   note: string;

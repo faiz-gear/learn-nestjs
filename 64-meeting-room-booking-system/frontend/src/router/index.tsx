@@ -11,6 +11,7 @@ import ManagementLayout from '@/pages/admin/c-pages/management'
 import { useUserStore, useShallow } from '@/store'
 import MeetingRoom from '@/pages/admin/c-pages/management/c-pages/meeting-room'
 import Booking from '@/pages/admin/c-pages/management/c-pages/booking'
+import BookingHistory from '@/pages/user/c-pages/booking-history'
 
 const MeetingRoomList = lazy(() => import('@/pages/user/c-pages/meeting-room-list'))
 const User = lazy(() => import('@/pages/admin/c-pages/management/c-pages/user'))
@@ -23,6 +24,10 @@ const userMenu = [
   {
     label: '会议室列表',
     href: '/meeting-room-list'
+  },
+  {
+    label: '预约历史',
+    href: '/booking-history'
   }
 ]
 const userRoutes: RouteObject[] = [
@@ -32,11 +37,11 @@ const userRoutes: RouteObject[] = [
   },
   {
     path: 'meeting-room-list',
-    element: <MeetingRoomList />,
-    loader: async () => ({
-      name: '会议室列表',
-      path: '/meeting-room-list'
-    })
+    element: <MeetingRoomList />
+  },
+  {
+    path: 'booking-history',
+    element: <BookingHistory />
   }
 ]
 const adminMenus = [
