@@ -11,6 +11,7 @@ import { BookingService } from './booking.service';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { RequireLogin, UserInfo } from 'src/custom.decorator';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { BookingStatus } from './enum/booking-status.enum';
 
 @ApiTags('预定')
 @Controller('booking')
@@ -53,6 +54,11 @@ export class BookingController {
     required: false,
     type: String,
   })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: BookingStatus,
+  })
   @RequireLogin()
   @Get('list')
   async list(
@@ -63,6 +69,7 @@ export class BookingController {
     @Query('bookingTimeStart') bookingTimeStart: Date,
     @Query('bookingTimeEnd') bookingTimeEnd: Date,
     @Query('bookingPosition') bookingPosition: string,
+    @Query('status') status: BookingStatus,
   ) {
     return this.bookingService.find(
       pageNo,
@@ -72,6 +79,7 @@ export class BookingController {
       bookingTimeStart,
       bookingTimeEnd,
       bookingPosition,
+      status,
     );
   }
 

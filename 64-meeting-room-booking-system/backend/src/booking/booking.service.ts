@@ -88,6 +88,7 @@ export class BookingService {
     bookingTimeStart: Date,
     bookingTimeEnd: Date,
     bookingPosition: string,
+    status: BookingStatus,
   ) {
     const skipCount = (pageNo - 1) * pageSize;
 
@@ -123,6 +124,10 @@ export class BookingService {
       condition.startTime = MoreThanOrEqual(new Date(bookingTimeStart));
     } else if (bookingTimeEnd) {
       condition.startTime = LessThanOrEqual(new Date(bookingTimeEnd));
+    }
+
+    if (status) {
+      condition.status = status;
     }
 
     const [bookings, totalCount] = await this.bookingRepository.findAndCount({

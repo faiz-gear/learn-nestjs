@@ -1,7 +1,7 @@
 import { memo, useState } from 'react'
 import { columns } from './columns'
 import { DataTable } from '@/components/data-table'
-import { IBookingPaginationParams, useBookingList } from '@/service/hooks/useBookingList'
+import { BookingStatus, IBookingPaginationParams, useBookingList } from '@/service/hooks/useBookingList'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
@@ -11,6 +11,15 @@ import { PaginationState } from '@tanstack/react-table'
 import { DateTimePicker } from '@/components/date-time-picker'
 import { getLocalTimeZone, parseAbsoluteToLocal } from '@internationalized/date'
 import dayjs from 'dayjs'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
 
 type SearchParams = Omit<IBookingPaginationParams, keyof IPaginationParams>
 
@@ -20,7 +29,8 @@ function Booking() {
     meetingRoomName: '',
     bookingTimeStart: dayjs().subtract(30, 'day').toISOString(),
     bookingTimeEnd: dayjs().toISOString(),
-    bookingPosition: ''
+    bookingPosition: '',
+    status: undefined
   })
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0, //initial page index
@@ -84,7 +94,37 @@ function Booking() {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange({ target: { value } })
+                      }}
+                      value={field.value}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="请选择状态" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>状态</SelectLabel>
+                          {Object.values(BookingStatus).map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  {/* <FormDescription>This is your public display name.</FormDescription> */}
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="bookingTimeStart"

@@ -3,12 +3,20 @@ import { SWRConfiguration } from 'swr'
 import { fetcher } from './fetcher'
 import { IPaginationParams } from '../type'
 
+export enum BookingStatus {
+  PENDING = '申请中',
+  APPROVED = '审批通过',
+  REJECTED = '审批驳回',
+  CANCELED = '已解除'
+}
+
 export interface IBookingPaginationParams extends IPaginationParams {
   username?: string
   meetingRoomName?: string
   bookingTimeStart?: string
   bookingTimeEnd?: string
   bookingPosition?: string
+  status?: BookingStatus
 }
 
 export interface IBookingItemVo {
