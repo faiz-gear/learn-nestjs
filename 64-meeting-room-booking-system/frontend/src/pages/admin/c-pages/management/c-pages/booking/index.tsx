@@ -18,8 +18,8 @@ function Booking() {
   const [params, setParams] = useState<SearchParams>({
     username: '',
     meetingRoomName: '',
-    bookingTimeStart: dayjs().subtract(1, 'day').toISOString(),
-    bookingTimeEnd: '',
+    bookingTimeStart: dayjs().subtract(30, 'day').toISOString(),
+    bookingTimeEnd: dayjs().toISOString(),
     bookingPosition: ''
   })
   const [pagination, setPagination] = useState<PaginationState>({

@@ -1,5 +1,6 @@
 import ConfirmAlert from '@/components/confirm-alert'
 import { Button } from '@/components/ui/button'
+import { applyBooking, rejectBooking, unbindBooking } from '@/service/booking'
 import { IBookingItemVo, IBookingListVo } from '@/service/hooks/useBookingList'
 import { ColumnDef } from '@tanstack/react-table'
 import { KeyedMutator } from 'swr'
@@ -53,6 +54,7 @@ export const columns: (mutate: KeyedMutator<IBookingListVo>) => ColumnDef<IBooki
           <ConfirmAlert
             title={`确认通过吗`}
             onConfirm={async () => {
+              await applyBooking(data.row.original.id)
               mutate()
             }}
           >
@@ -63,6 +65,7 @@ export const columns: (mutate: KeyedMutator<IBookingListVo>) => ColumnDef<IBooki
           <ConfirmAlert
             title={`确认驳回吗`}
             onConfirm={async () => {
+              await rejectBooking(data.row.original.id)
               mutate()
             }}
           >
@@ -73,6 +76,7 @@ export const columns: (mutate: KeyedMutator<IBookingListVo>) => ColumnDef<IBooki
           <ConfirmAlert
             title={`确认解除吗`}
             onConfirm={async () => {
+              await unbindBooking(data.row.original.id)
               mutate()
             }}
           >

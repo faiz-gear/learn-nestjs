@@ -5,7 +5,7 @@ import { User } from 'src/user/entities/user.entity';
 import {
   Between,
   EntityManager,
-  FindOneOptions,
+  FindOptionsWhere,
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
@@ -91,7 +91,7 @@ export class BookingService {
   ) {
     const skipCount = (pageNo - 1) * pageSize;
 
-    const condition: FindOneOptions<Booking>['where'] = {};
+    const condition: FindOptionsWhere<Booking> = {};
 
     if (username) {
       condition.user = {
@@ -109,7 +109,9 @@ export class BookingService {
       if (!condition.room) {
         condition.room = {};
       }
-      condition.room = Like(`%${bookingPosition}%`);
+      (condition.room as FindOptionsWhere<MeetingRoom>).location = Like(
+        `%${bookingPosition}%`,
+      );
     }
 
     if (bookingTimeStart && bookingTimeEnd) {
