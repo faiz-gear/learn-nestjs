@@ -17,6 +17,9 @@ interface PendingTask {
 let refreshing = false
 const queue: PendingTask[] = []
 
+const isRefreshTokenUrl = (url: string) =>
+  url.includes('/user/refresh-token') || url.includes('/user/admin/refresh-token')
+
 request.interceptors.request.use((config) => {
   if (localStorage.getItem('accessToken')) {
     config.headers['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken')
@@ -32,7 +35,7 @@ request.interceptors.response.use(
       const { data, config } = response
 
       try {
-        if (data.code === 401 && !config.url?.includes('/user/refresh')) {
+        if (data.code === 401 && !isRefreshTokenUrl(config.url || '')) {
           // 除了刷新token的请求, 其他接口返回401时, 刷新token
           if (refreshing) {
             // 正在刷新token, 将请求放入队列
@@ -49,7 +52,7 @@ request.interceptors.response.use(
           refreshing = false
 
           // 刷新token成功, 重新发起之前的请求
-          if (res.status === 200) {
+          if (res.code === 200) {
             queue.forEach(({ config, resolve }) => {
               resolve(request(config))
             })
@@ -70,7 +73,7 @@ request.interceptors.response.use(
         variant: 'destructive'
       })
       // 如果刷新token失败, 则跳转到登录页
-      if (config.url?.includes('/user/refresh')) {
+      if (isRefreshTokenUrl(config.url || '')) {
         setTimeout(() => {
           const isAdmin = useUserStore.getState().userInfo?.isAdmin
           window.location.href = isAdmin ? '/admin/login' : '/login'
@@ -99,7 +102,10 @@ const put = <T = any>(url: string, data?: unknown, config?: AxiosRequestConfig) 
 
 export async function refreshToken() {
   const isAdmin = useUserStore.getState().userInfo?.isAdmin
-  const res = await request.get(isAdmin ? '/user/admin/refresh-token' : '/user/refresh-token', {
+  const res: IResponse<{
+    accessToken: string
+    refreshToken: string
+  }> = await request.get(isAdmin ? '/user/admin/refresh-token' : '/user/refresh-token', {
     params: {
       refreshToken: localStorage.getItem('refreshToken')
     }
