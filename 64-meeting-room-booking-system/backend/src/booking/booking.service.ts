@@ -9,7 +9,6 @@ import {
   LessThanOrEqual,
   Like,
   MoreThanOrEqual,
-  Raw,
   Repository,
 } from 'typeorm';
 import { Booking } from './entities/booking.entity';
@@ -173,12 +172,8 @@ export class BookingService {
       room: {
         id: meetingRoom.id,
       },
-      startTime: Raw((alias) => `${alias} < :endTime`, {
-        endTime: booking.startTime,
-      }),
-      endTime: Raw((alias) => `${alias} > :startTime`, {
-        startTime: booking.endTime,
-      }),
+      startTime: LessThanOrEqual(new Date(bookingDto.endTime)),
+      endTime: MoreThanOrEqual(new Date(bookingDto.startTime)),
     });
 
     if (res) {
