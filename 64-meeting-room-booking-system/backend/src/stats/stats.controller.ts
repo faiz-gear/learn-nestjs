@@ -1,13 +1,17 @@
-import { Controller, Get, Inject, Query } from '@nestjs/common';
+import { Controller, Get, HttpStatus, Inject, Query } from '@nestjs/common';
 import { StatsService } from './stats.service';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { RequireLogin } from 'src/custom.decorator';
+import { UserStats } from './vo/user-stats.vo';
+import { MeetingRoomStats } from './vo/meeting-room-stats.vo';
 
 @ApiTags('统计')
-@Controller('statistic')
+@Controller('stats')
 export class StatsController {
   @Inject(StatsService)
-  private statisticService: StatsService;
+  private statsService: StatsService;
 
+  @ApiBearerAuth()
   @ApiQuery({
     name: 'startTime',
     type: Date,
@@ -20,14 +24,20 @@ export class StatsController {
     required: true,
     description: '结束时间',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: [UserStats],
+  })
   @Get('users-stats')
+  @RequireLogin()
   async getUsersStats(
     @Query('startTime') startTime: Date,
     @Query('endTime') endTime: Date,
   ) {
-    return this.statisticService.getUsersStats(startTime, endTime);
+    return this.statsService.getUsersStats(startTime, endTime);
   }
 
+  @ApiBearerAuth()
   @ApiQuery({
     name: 'startTime',
     type: Date,
@@ -40,11 +50,16 @@ export class StatsController {
     required: true,
     description: '结束时间',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: [MeetingRoomStats],
+  })
   @Get('meeting-room-stats')
+  @RequireLogin()
   async getMeetingRoomStats(
     @Query('startTime') startTime: Date,
     @Query('endTime') endTime: Date,
   ) {
-    return this.statisticService.getMeetingRoomStats(startTime, endTime);
+    return this.statsService.getMeetingRoomStats(startTime, endTime);
   }
 }

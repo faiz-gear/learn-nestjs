@@ -30,8 +30,8 @@ export class StatsService {
   async getMeetingRoomStats(startTime: Date, endTime: Date) {
     const res = await this.entityManager
       .createQueryBuilder(Booking, 'b')
-      .addSelect('count(*)', 'usedCount')
       .select('m.id', 'meetingRoomId')
+      .addSelect('count(*)', 'usedCount')
       .addSelect('m.name', 'meetingRoomName')
       .leftJoin(MeetingRoom, 'm', 'b.roomId = m.id')
       .where('b.startTime between :time1 and :time2', {
