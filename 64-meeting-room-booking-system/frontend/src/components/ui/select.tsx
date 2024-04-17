@@ -7,17 +7,16 @@ import { cn } from '@/lib/utils'
 const Select = (props: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root>) => (
   <div className="relative">
     <SelectPrimitive.Root {...props} />
-    <div className="absolute right-8 top-1/2 -translate-y-1/2 flex gap-2">
-      <X
-        className="h-4 w-4 opacity-100 hover:opacity-50"
-        onClick={() => {
-          console.log('object')
-          // e.stopPropagation()
-          // e.preventDefault()
-          props.onValueChange?.('')
-        }}
-      />
-    </div>
+    {(props.value || props.defaultValue) && (
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 flex gap-2">
+        <X
+          className="h-4 w-4 opacity-100"
+          onClick={() => {
+            props.onValueChange?.('')
+          }}
+        />
+      </div>
+    )}
   </div>
 )
 

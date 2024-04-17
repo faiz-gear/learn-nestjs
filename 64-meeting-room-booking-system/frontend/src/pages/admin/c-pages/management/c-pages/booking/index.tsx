@@ -183,6 +183,7 @@ function Booking() {
         columns={columns(mutate)}
         data={bookingList?.bookings || []}
         rowCount={bookingList?.totalCount || 0}
+        defaultPagination={pagination}
         onPaginationChange={setPagination}
       />
     </div>
