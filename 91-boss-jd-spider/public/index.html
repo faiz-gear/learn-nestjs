@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul id="list"></ul>
+    <script>
+      const eventSource = new EventSource('http://localhost:3000/events');
+      eventSource.onmessage = (event) => {
+        const list = document.getElementById('list');
+        const newElement = document.createElement('li');
+        const newElementText = document.createTextNode(
+          JSON.stringify(event.data),
+        );
+        newElement.appendChild(newElementText);
+        list.appendChild(newElement);
+      };
+    </script>
+  </body>
+</html>
