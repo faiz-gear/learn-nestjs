@@ -68,6 +68,9 @@ export class AppService {
       allJobs.push(...jobs);
     }
 
+    // 清空Job表
+    this.entityManager.clear(Job);
+
     // 获取职位描述
     for (let i = 0; i < allJobs.length; i++) {
       await page.goto(allJobs[i].link);

@@ -12,7 +12,7 @@ import { Job } from './entities/Job';
       port: 3306,
       username: 'root',
       password: 'admin',
-      database: 'typeorm_test',
+      database: 'boss-spider',
       synchronize: true,
       logging: true,
       entities: [Job],
