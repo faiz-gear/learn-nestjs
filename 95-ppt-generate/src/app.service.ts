@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import puppeteer from 'puppeteer';
 import { Observable, Subscriber } from 'rxjs';
-import * as PptxGenJS from 'pptxgenjs';
+import PptxGenJS from 'pptxgenjs';
 
 let cache = null;
 
@@ -44,8 +44,6 @@ export class AppService {
         },
       );
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       const ppt = new PptxGenJS();
 
       for (let i = 0; i < 10; i++) {
